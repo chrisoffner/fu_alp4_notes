@@ -1,16 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 int main(void) {
   int status;
-  pid_t pid = fork();
-
+  pid_t pid = fork(); // returns process ID of child to parent
+                      // and 0 to child process
   if (pid == 0) {
     // Child process
     printf("Child process running.\n");
-    // lalala
+    // Work could be done here...
     printf("Child process done.\n");
     exit(123);
   } else if (pid > 0) {

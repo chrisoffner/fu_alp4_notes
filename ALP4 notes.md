@@ -52,9 +52,48 @@ A **determined algorithm** is an algorithm which, given a specific input, produc
 ---
 ## 3 Concurrency
 
+### Process generation with `fork()`
 
+The `fork()` system call, defined in the POSIX standard, creates a new address space in main memory in which an exact copy of the calling process resides. Both parent and child hold separate copies of all variables.
 
+The resulting processes can be distinguished by the distinct return values they receive from `fork()`:
 
+- For the child process, `pid = fork()` sets `pid` to  `0`
+- For the parent process, `pid = fork()` sets `pid` to the process id of the newly created child process
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(void) {
+  int status;
+  pid_t pid = fork(); // returns process ID of child to parent
+                      // and 0 to child process
+  if (pid == 0) {
+    // Child process
+    printf("Child process running.\n");
+    // Work could be done here...
+    printf("Child process done.\n");
+    exit(123);
+  } else if (pid > 0) {
+    // Parent process
+    printf("Parent process waiting for child %d...\n", pid);
+
+    pid = wait(&status);
+
+    printf("Parent finds child process %d terminated, status %d.\n", pid,
+           WEXITSTATUS(status));
+
+    exit(EXIT_SUCCESS);
+  } else {
+    printf("fork() failed.\n");
+    exit(EXIT_FAILURE);
+  }
+}
+```
+
+Without some special methods not covered in this course, processes cannot access each others' memory, and therefore cannot effectively work on data where they need to continuously exchange information (as opposed to merely merging together separate results in the end). To achieve concurrency with shared memory, we make use of **threads**.
 
 ## 4 Threads
 
