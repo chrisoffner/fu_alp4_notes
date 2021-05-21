@@ -1,14 +1,14 @@
-# Nichtsequentielle und Verteilte Programmierung
+# Concurrent & Distributed Programming
 
-## Nonsequential programming paradigms
+## Concurrent Programming Paradigms
 
 - **Concurrent programming**
   Machine with one CPU
 - **Parallel programming**
   Machine with several CPUs with or without shared memory
-  machine, which requires message exchange
+  Machine which requires message exchange
 - **Distributed programming**
-  Different machines
+  Different machines connected via a network
 
 ## Programming Model
 
@@ -54,7 +54,7 @@ A **determined algorithm** is an algorithm which, given a specific input, produc
 
 ### Process generation with `fork()`
 
-The `fork()` system call, defined in the POSIX standard, creates a new address space in main memory in which an exact copy of the calling process resides. Both parent and child hold separate copies of all variables.
+The `fork()` system call, defined in the POSIX standard, creates an exact copy of the calling process in a new address space in main memory. Both parent and child hold separate copies of all variables.
 
 The resulting processes can be distinguished by the distinct return values they receive from `fork()`:
 
@@ -132,9 +132,19 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ## 7 Deadlocks
 
-...
+- Defining Deadlocks
+- Requirements for a Deadlock
+- Handling Deadlocks
+- Modelling Resource Allocations
+- **Banker's Algorithm**
 
 ## 8 Semaphores & Monitors
+
+### Semaphores
+
+...
+
+### Monitors
 
 ...
 
@@ -144,7 +154,8 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ## 10 Parallel Programming with Message Passing
 
-...
+- Parallel programming with message passing
+- Foster's Design Methodology
 
 ## 11 MPI – Message Passing Interface
 
@@ -154,7 +165,7 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ...
 
-## 13-15 Design and Implementation of Parallel Applications
+## 13—15 Design and Implementation of Parallel Applications
 
 ...
 
@@ -182,7 +193,7 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ... 
 
-## 20 Peer2Peer Systems
+## 20 Peer-to-Peer Systems
 
 ...
 
