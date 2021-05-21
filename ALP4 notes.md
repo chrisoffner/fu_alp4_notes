@@ -50,39 +50,128 @@ A **determined algorithm** is an algorithm which, given a specific input, produc
 *A: The assembly code of a program gets executed sequentially due to the automatic incrementation of the instruction pointer.*
 
 ---
-## Concurrency
+## 3 Concurrency
 
 
 
 
 
-
-
-## Threads
+## 4 Threads
 
 ...
 
-## Petri-Netze
+## 5 Parallelization
 
 ...
 
-## Deadlocks
+## 6 Petri Nets
 
 ...
 
-## Semaphor
+## 7 Deadlocks
 
 ...
 
-## Monitor
+## 8 Semaphores & Monitors
 
 ...
 
-## OpenMP
+## 9 OpenMP
 
 ...
 
-## MPI
+## 10 Parallel Programming with Message Passing
 
 ...
 
+## 11 MPI – Message Passing Interface
+
+...
+
+## 12 MPI Group Communication and MPI 2
+
+...
+
+## 13-15 Design and Implementation of Parallel Applications
+
+...
+
+## 16 From Concurrent to Parallel Programming
+
+...
+
+## 17 Communication Paradigms in Distributed Systems
+
+...
+
+### Interprocess Communication
+
+...
+
+### 18.2 - 18.3 Remote Invocation
+
+...
+
+### RMI - Remote Method Invocation
+
+...
+
+### Java RMI
+
+... 
+
+## 20 Peer2Peer Systems
+
+...
+
+### Basics
+
+...
+
+### 20.2 Centralized, Pure and Hybrid P2P Systems
+
+...
+
+### 20.3 DHT-based P2P Systems
+
+...
+
+### 20.4 P2P-based Whiteboard
+
+...
+
+## 21 Cloud Computing
+
+...
+
+### 21.2 Background Technologies
+
+...
+
+### 21.3 Deployment and Service Models
+
+...
+
+## 22 Web Application Development
+
+...
+
+### 22.2 CSS and JS
+
+...
+
+### 22.3 JS Frameworks
+
+...
+
+### 24.1 URI & URL
+
+...
+
+### 24.2 HTTP
+
+...
+
+### REST & WebSockets
+
+...
