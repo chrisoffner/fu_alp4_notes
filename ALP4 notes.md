@@ -97,7 +97,30 @@ Without some special methods not covered in this course, processes cannot access
 
 ## 4 Threads
 
+Unlike processes, which each contain their own unique process id and address space, threads of the same process share a common process id and "live" in the same address space. They share memory (heap) but each thread has its own stack.
+
+To use threads in different environments there exists a standardized interface: POSIX **pthreads**
+
+A new pthread does not start right after the invocation (as would be the case with `fork()`), but instead starts execution at a given address in the program's text/code segment. Therefore a function pointer is passed to `pthread_create()` to give the thread a starting point for execution.
+
+### Critical Section
+
 ...
+
+### Mutual Exclusion
+
+...
+
+- Lock
+- Twofold lock
+- Twofold Lock with Primary Protection
+- Twofold Lock with Mutual Precedence
+
+### Requirements for Protection of the Critical Section
+
+- Solution has to protect the critical section reliably by **mutual exclusion**.
+- Solution should be portable across architectures and usable in higher level programming languages.
+- Solution must not lead to a **deadlock**.
 
 ## 5 Parallelization
 
