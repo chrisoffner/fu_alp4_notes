@@ -37,17 +37,17 @@ The **machine model** represents the physical execution of a program on the hard
 
 ---
 
-A **deterministic algorithm** is an algorithm which, given a specific input, will always produce the same specific output and will always change the state of the system in the same way (and order).
+> ## Deterministic
+>
+> A **deterministic algorithm** is an algorithm which, given a specific input, will always produce the same specific output and will always change the state of the system in the same way (and order).
 
----
+> ## Determined 
+>
+> A **determined algorithm** is an algorithm which, given a specific input, produces always the same specific output.
 
-A **determined algorithm** is an algorithm which, given a specific input, produces always the same specific output.
-
----
-
-**Q: What ensures the sequential execution of a program?**
-
-*A: The assembly code of a program gets executed sequentially due to the automatic incrementation of the instruction pointer.*
+> ### What ensures the sequential execution of a program?
+>
+>The assembly code of a program gets executed sequentially due to the automatic incrementation of the instruction pointer.
 
 ---
 ## 3 Concurrency
@@ -248,3 +248,24 @@ A new pthread does not start right after the invocation (as would be the case wi
 ### REST & WebSockets
 
 ...
+
+
+
+# Theme-specific formatting
+
+Using the **[Fluent](https://github.com/HereIsLz/Fluent-Typora)** theme in Typora we can use special rendering for semantically distinct blocks like this:
+
+> # Bookmark
+> An `H1` inside a block quote gets rendered as **Bookmark**.
+
+> ## Starred
+> An `H2` inside a block quote gets rendered as **Starred**.
+
+> ### Idea
+> An `H3` inside a block quote gets rendered as **Idea**.
+
+> #### Warning
+> An `H4` inside a block quote gets rendered as **Warning**.
+
+> ##### Question
+> An `H5` inside a block quote gets rendered as **Question**.
