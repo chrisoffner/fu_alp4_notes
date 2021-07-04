@@ -256,21 +256,6 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 
 
-# Theme-specific formatting
+# Exam Questions
 
-Using the **[Fluent](https://github.com/HereIsLz/Fluent-Typora)** theme in Typora we can use special rendering for semantically distinct blocks like this:
-
-> # Bookmark
-> An `H1` inside a block quote gets rendered as **Bookmark**.
-
-> ## Starred
-> An `H2` inside a block quote gets rendered as **Starred**.
-
-> ### Idea
-> An `H3` inside a block quote gets rendered as **Idea**.
-
-> #### Warning
-> An `H4` inside a block quote gets rendered as **Warning**.
-
-> ##### Question
-> An `H5` inside a block quote gets rendered as **Question**.
+...
