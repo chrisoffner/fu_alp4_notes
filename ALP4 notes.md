@@ -177,13 +177,18 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ...
 
-### Interprocess Communication
+## 18.1 Interprocess Communication
 
 ...
 
 ### 18.2 - 18.3 Remote Invocation
 
-...
+#### Distribution Transparency
+
+- Access Transparency
+- Location Transparency
+- Migration Transparency
+- Replication Transparency
 
 ### RMI - Remote Method Invocation
 
