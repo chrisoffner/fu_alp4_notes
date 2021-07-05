@@ -256,7 +256,68 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 
 
-# Exam Questions
+# Questions
+
+## 1 Deadlocks
+
+----
+
+**Welche vier Bedingungen müssen gelten, damit Deadlocks in einem System auftreten können?**
+
+1. **Mutual Exclusion:** Ressourcen werden exklusiv genutzt.
+2. **Hold and Wait:** Prozesse/Threads beanspruchen Zugriff auf Betriebsmittel und fordern zusätzlich Zugriff auf weitere an.
+3. **No Preemption:** Betriebsmittel werden ausschließlich durch die Prozesse/Threads freigegeben, die sie nutzen. 
+4. **Circular wait:** Der Wait-For-Graph enthält einen Kreis.
+
+----
+
+**Inwiefern unterscheidet sich Deadlock Avoidance von Deadlock Prevention?**
+
+- **Deadlock Avoidance** ist ein Mechanismus, mit dem vermieden werden soll, dass ein System in einen *unsicheren Zustand* eintritt. Ein *unsicherer Zustand* besteht, wenn mindestens ein Thread noch ausstehende Zugriffsanfragen hat, die nicht mit den aktuell freien Betriebsmitteln befriedigt werden können.
+    - Ergreift Maßnahmen zur Vermeidung eines unsicheren Zustands basierend auf Kenntnis zukünftiger Betriebsmittelverfügbarkeit und -anfragen.
+    - Nutzt Bankiersalgorithmus.
+- **Deadlock Prevention** ist eine Maßnahme, welche die Belegung von Betriebsmitteln so einschränkt, dass mindestens eine notwendige Bedingung für einen Deadlock gar nicht erst eintreten kann.
+    - Keine Kenntnis über zukünftige Betriebsmittelverfügbarkeit und -anfragen nötig.
+
+**Skizziere einen Deadlock in C.**
+
+...
+
+**Wie ist ein sicherer Zustand definiert?**
+
+...
+
+**Ist jeder Deadlock ein unsicherer Zustand? Warum?**
+
+...
+
+**Ist jeder unsichere Zustand ein Deadlock? Warum?**
+
+...
+
+**Gegeben sei der folgende Systemzustand:**
+$$
+R = \begin{pmatrix}2 & 1 & 2\\1&1&1\\2&2&0\\0&0&1\end{pmatrix},\quad G=\begin{pmatrix}4&1&2\\3&2&2\\2&2&1\\1&1&4\end{pmatrix},\quad f=\begin{pmatrix}1&0&1\end{pmatrix}
+$$
+**(i) Berechne mit dem Bankieralgorithmus, ob der angegebene Systemzustand *sicher* ist.**
+
+...
+
+**(ii) Angenommen der Thread $T_3$ stellt die Teilanforderung $\begin{pmatrix}1&0&0\end{pmatrix}$ an das System. Ist der Systemzustand nach der Erfüllung dieser Teilanforderung sicher? Sollte die Teilanforderung von $T_3$ erfüllt werden?**
+
+...
+
+**(iii)  Beantworte die vorherige Teilaufgabe für den Thread $T_2$ und die Teilanforderung $\begin{pmatrix}0&0&1\end{pmatrix}$.**
+
+...
+
+**Analysiere die Laufzeit vom Bankieralgorithmus.**
+
+...
+
+**Wie praktikabel ist eigentlich der Bankieralgorithmus?**
+
+...
 
 ## Semaphoren und Monitore
 
@@ -315,56 +376,6 @@ A new pthread does not start right after the invocation (as would be the case wi
 ...
 
 **Gegeben seien n ganze Zahlen $a_1, a_2, . . ., a_n$. Entwickle mithilfe von *Foster’s Design Methodology* einen parallelen Algorithmus, welcher $\mathrm{min}_{i=1,...,n}a_i$ berechnet.**
-
-...
-
-## Deadlocks
-
-**Welche vier Bedingungen müssen gelten, damit Deadlocks in einem System auftreten können?**
-
-...
-
- **Inwiefern unterscheidet sich Deadlock Avoidance von Deadlock Prevention?**
-
-...
-
-**Skizziere einen Deadlock in C.**
-
-...
-
-**Wie ist ein sicherer Zustand definiert?**
-
-...
-
-**Ist jeder Deadlock ein unsicherer Zustand? Warum?**
-
-...
-
-**Ist jeder unsichere Zustand ein Deadlock? Warum?**
-
-...
-
-**Gegeben sei der folgende Systemzustand:**
-$$
-R = \begin{pmatrix}2 & 1 & 2\\1&1&1\\2&2&0\\0&0&1\end{pmatrix},\quad G=\begin{pmatrix}4&1&2\\3&2&2\\2&2&1\\1&1&4\end{pmatrix},\quad f=\begin{pmatrix}1&0&1\end{pmatrix}
-$$
-**(i) Berechne mit dem Bankieralgorithmus, ob der angegebene Systemzustand *sicher* ist.**
-
-...
-
-**(ii) Angenommen der Thread $T_3$ stellt die Teilanforderung $\begin{pmatrix}1&0&0\end{pmatrix}$ an das System. Ist der Systemzustand nach der Erfüllung dieser Teilanforderung sicher? Sollte die Teilanforderung von $T_3$ erfüllt werden?**
-
-...
-
-**(iii)  Beantworte die vorherige Teilaufgabe für den Thread $T_2$ und die Teilanforderung $\begin{pmatrix}0&0&1\end{pmatrix}$.**
-
-...
-
-**Analysiere die Laufzeit vom Bankieralgorithmus.**
-
-...
-
-**Wie praktikabel ist eigentlich der Bankieralgorithmus?**
 
 ...
 
