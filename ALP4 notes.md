@@ -273,11 +273,16 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 **Inwiefern unterscheidet sich Deadlock Avoidance von Deadlock Prevention?**
 
-- **Deadlock Avoidance** ist ein Mechanismus, mit dem vermieden werden soll, dass ein System in einen *unsicheren Zustand* eintritt. Ein *unsicherer Zustand* besteht, wenn mindestens ein Thread noch ausstehende Zugriffsanfragen hat, die nicht mit den aktuell freien Betriebsmitteln befriedigt werden können.
+- Bei **Deadlock Avoidance** soll vermieden werden, dass ein System in einen *unsicheren Zustand* eintritt. Ein *unsicherer Zustand* besteht, wenn mindestens ein Thread noch ausstehende Zugriffsanfragen hat, die nicht mit den aktuell freien Betriebsmitteln befriedigt werden können.
+
     - Ergreift Maßnahmen zur Vermeidung eines unsicheren Zustands basierend auf Kenntnis zukünftiger Betriebsmittelverfügbarkeit und -anfragen.
     - Nutzt Bankiersalgorithmus.
-- **Deadlock Prevention** ist eine Maßnahme, welche die Belegung von Betriebsmitteln so einschränkt, dass mindestens eine notwendige Bedingung für einen Deadlock gar nicht erst eintreten kann.
+
+- Bei **Deadlock Prevention** wird die Belegung von Betriebsmitteln so eingeschränkt, dass mindestens eine notwendige Bedingung für einen Deadlock gar nicht erst eintreten kann.
+
     - Keine Kenntnis über zukünftige Betriebsmittelverfügbarkeit und -anfragen nötig.
+
+----
 
 **Skizziere einen Deadlock in C.**
 
