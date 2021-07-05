@@ -258,4 +258,214 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 # Exam Questions
 
+## Semaphoren und Monitore
+
+**Definiere eine Semaphore. Welche Operationen sind für eine Semaphore definiert?**
+
 ...
+
+**Ist es wichtig, dass die Operationen aus der vorherigen Frage atomar ausgeführt werden?**
+
+...
+
+**Vergleiche Mutexe und Semaphoren. Was sind Gemeinsamkeiten und Unterschiede?**
+
+...
+
+**Was ist eine binäre Semaphore? Ist eine binäre Semaphore und ein Mutex dasselbe?**
+
+...
+
+**Beschreibe den Aufbau eines Monitors:**
+
+- **Welche Datenstrukturen können zu einem Monitor gehören?**
+
+- **Welche Operationen sind für einen Monitor definiert?**
+
+...
+
+**Skizziere eine Lösung in Pseudocode zu der folgenden Aufgabe[^1]:**
+
+**Auf eine Datei wird durch mehrere Threads ausschließlich lesend zugegriffen. Die TIDs der Threads seien durch paarweise verschiedene natürliche Zahlen gegeben. Zu keinem Zeitpunkt darf jedoch die Summe der TIDs derjenigen Threads, welche aktuell auf die Datei zugreifen, eine initial fest gewählte Schranke $N \in \N$ überschreiten. Entwickle einen Monitor, welcher einen gemeinsamen Zugriff auf die Datei unter der eben genannten Einschränkung realisiert.**
+
+...
+
+## Parallel Applications
+
+**Erkläre Foster’s Design Methodology! Welche vier Schritte werden dort genannt und was ist das Ziel jeden einzelnen Schritts?**
+
+...
+
+**Erkläre das BSP Model!**
+
+...
+
+**Angenommen man möchte grob überschlagen, ob es sich lohnt ein bestimmtes serielles Programm zu parallelisieren. Durch Benchmarks hat man ermittelt, dass 80% der Ausführungszeit in Funktionen verbracht wird, die sich gut parallelisieren lassen. Die restlichen 20% der Ausführungszeit wird in Codeabschnitten verbracht, die unbedingt seriell ausgeführt werden müssen (z.B. kritische Abschnitte).**
+
+**(i) Wie hoch ist der erwartete Speed-Up für 6 Prozessoren?**
+
+...
+
+**(ii) Wie hoch ist der erwartete Speed-Up für beliebig viele Prozessoren?**
+
+...
+
+**Ist Amdahl’s Law eine realitätsnahe Abschätzung des zu erwartenden Speed-Up für die Parallelisierung eines Programms?**
+
+...
+
+**Gegeben seien n ganze Zahlen $a_1, a_2, . . ., a_n$. Entwickle mithilfe von *Foster’s Design Methodology* einen parallelen Algorithmus, welcher $\mathrm{min}_{i=1,...,n}a_i$ berechnet.**
+
+...
+
+## Deadlocks
+
+**Welche vier Bedingungen müssen gelten, damit Deadlocks in einem System auftreten können?**
+
+...
+
+ **Inwiefern unterscheidet sich Deadlock Avoidance von Deadlock Prevention?**
+
+...
+
+**Skizziere einen Deadlock in C.**
+
+...
+
+**Wie ist ein sicherer Zustand definiert?**
+
+...
+
+**Ist jeder Deadlock ein unsicherer Zustand? Warum?**
+
+...
+
+**Ist jeder unsichere Zustand ein Deadlock? Warum?**
+
+...
+
+**Gegeben sei der folgende Systemzustand:**
+$$
+R = \begin{pmatrix}2 & 1 & 2\\1&1&1\\2&2&0\\0&0&1\end{pmatrix},\quad G=\begin{pmatrix}4&1&2\\3&2&2\\2&2&1\\1&1&4\end{pmatrix},\quad f=\begin{pmatrix}1&0&1\end{pmatrix}
+$$
+**(i) Berechne mit dem Bankieralgorithmus, ob der angegebene Systemzustand *sicher* ist.**
+
+...
+
+**(ii) Angenommen der Thread $T_3$ stellt die Teilanforderung $\begin{pmatrix}1&0&0\end{pmatrix}$ an das System. Ist der Systemzustand nach der Erfüllung dieser Teilanforderung sicher? Sollte die Teilanforderung von $T_3$ erfüllt werden?**
+
+...
+
+**(iii)  Beantworte die vorherige Teilaufgabe für den Thread $T_2$ und die Teilanforderung $\begin{pmatrix}0&0&1\end{pmatrix}$.**
+
+...
+
+**Analysiere die Laufzeit vom Bankieralgorithmus.**
+
+...
+
+**Wie praktikabel ist eigentlich der Bankieralgorithmus?**
+
+...
+
+## OpenMP
+
+**Mit welcher Option kann OpenMP in gcc aktiviert werden?**
+
+...
+
+**Was bedeutet Functional Parallelism?**
+
+...
+
+**Was ist eine Barriere?**
+
+...
+
+**Was ist der Unterschied zwischen `#pragma omp single` und `#pragma omp critical`?**
+
+...
+
+**In der Ankündigung befindet sich ein C-Programm `sum.c`, welches die Summe $\sum_{i=1}^{5.000.000}i$ berechnet. Parallelisiere das Programm mit OpenMP. Das Ergebnis sollte mit der seriellen Version immer noch übereinstimmen. Es steht auf Seite 2 ein Tipp, falls man einen braucht.**
+
+...
+
+**Die Menge ${1, 2, . . . , 20}$ enthält die Primzahlen $2,3,5,7,11,13,17,19$. Die größte Lücke zwischen zwei aufeinanderfolgenden Primzahlen ist hier $4 = 17 - 13 = 11 - 7$. In der Ankündigung befindet sich ein C-Programm `primes_gaps.c`, welches das oben beschriebene Problem für die Menge ${1, 2, . . . , 600000}$ löst. Die Lösung des Problems ist in diesem Fall $114 = 492227 − 492113$.**
+
+**(i)  Parallelisiere das Programm mit OpenMP. Das Ergebnis sollte immer noch 114 sein. Es stehen auf Seite 2 einige Tipps, falls etwas Hilfestellung benötigt wird.**
+
+...
+
+**(ii)  Vergleiche die sequentielle Version aus der Ankündigung und die parallelisierte Version aus Teilaufgabe (i) bezüglich der Ausführungszeit (beispielsweise mit time im Terminal).**
+
+...
+
+**(iii)  Ist der erhaltene Speed-Up zufriedenstellend?**
+
+...
+
+## MPI
+
+**Kompiliere die Datei `mpi_hello_world.c` auf `andorra.imp.fu-berlin.de` und führe das kompilierte Programm mittels `mpirun` aus. Verwende als Argumente `-machinefile Machinefile -np 12`. Die Dateien `mpi_hello_world.c` und `Machinefile` befinden sich im Anhang.**
+
+...
+
+**Vergleiche synchrone Kommunikation mit asynchroner Kommunikation und nenne passende Beispiele aus der Vorlesung über MPI.**
+
+...
+
+**Vergleiche `MPI_Gather` und `MPI_Allgather`.**
+
+...
+
+**Betrachte die Datei `mpi_share_input.c`. Das Programm soll einen String von der Kommandozeile lesen und anschließend soll der Knoten mit Rank 0 diesen String an alle anderen Knoten verteilen. Ergänze in der Datei `mpi_share_input.c` ausschließlich im Bereich "//LÖSUNG ANFANG ... //LÖSUNG ENDE" *MPI Befehle*, sodass das Programm die Aufgabe löst. Kein Prozess sollte beim zweiten `printf(...)` den Text `FIX ME!!!` ausgeben.**
+
+...
+
+**Die Datei `mpi_calc_pi.c` enthält eine angepasste Version von Beispiel *09-06* aus der Vorlesung. Dort wird $\pi$ approximiert, indem man $\int_{0}^1 \frac{4}{1+x^2}dx$ numerisch integriert. Verteile die numerische Berechnung auf mehrere Knoten und verwende am Schluss `MPI_Reduce`, um $\pi$ zu approximieren.**
+
+...
+
+**Die Aufgabe von `mpi_calc_max.c` ist es das Maximum von einem Array mit 100000000 vielen 16-Bit Integer zu berechnen. Teile das Problem mittels *MPI* auf verschiedene Knoten auf. Das Ergebnis ist immer eine fünfstellige Zahl und eindeutig.**
+
+...
+
+**Ist es sinnvoll, OpenMP und MPI zu kombinieren?**
+
+...
+
+## Verteilte Systeme I
+
+**Wie definiert man einen eigenen Thread in Java?**
+
+...
+
+**Was ist (Un-)Marshalling?**
+
+...
+
+**Was ist eine Middleware? Gib ein Beispiel für eine Middleware.**
+
+...
+
+**Vergleiche IPC und RPC.**
+
+...
+
+**Skizziere die Implementierung eines Remote Procedure Calls.**
+
+...
+
+**Vergleiche At-least-once semantics und At-most-once semantics bei RPC Calls. In welchen Szenarien würde man welche RPC Call Semantics bevorzugen?**
+
+...
+
+**Betrachte das Beispiel RPCExample im Github-Repository https://github.com/FUB-HCC/WhiteBoard-Implementation-Examples und erkläre, wie das Beispiel funktioniert.**
+
+...
+
+
+
+----
+
+[^1]: siehe Aufgabe 6.29 in Silberschatz, Abraham, Peter B. Galvin, and Greg Gagne. Operating System Concepts / Abraham Silberschatz ; Peter Baer Galvin ; Greg Gagne. 10. ed.

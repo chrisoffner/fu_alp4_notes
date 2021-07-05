@@ -1,4 +1,4 @@
-// simple accounting with pthreads
+// LAMPORT'S BAKERY
 
 #include <pthread.h>
 #include <stdio.h>
@@ -7,25 +7,29 @@
 #define NUM_THREADS 6
 
 int account[NUM_THREADS];
-char enter[NUM_THREADS];
+char enter[NUM_THREADS]; // expresses thread's desire to enter
 int tickets[NUM_THREADS];
 
 int lock(long tid) {
-  int i, max;
+  int max = 0;
+  enter[tid] = 1; // declare ticket pulling phase
 
-  enter[tid] = 1;
-  max = 0;
-  for (i = 0; i < NUM_THREADS; i++) {
-    if (max < tickets[i])
+  // sets max to the highest ticket number
+  for (int i = 0; i < NUM_THREADS; i++) {
+    if (max < tickets[i]) {
       max = tickets[i];
+    }
   }
-  tickets[tid] = max + 1;
-  enter[tid] = 0;
+  tickets[tid] = max + 1; // take the next available ticket
+  enter[tid] = 0;         // finished pulling ticket
 
-  for (i = 0; i < NUM_THREADS; i++) {
+  for (int i = 0; i < NUM_THREADS; i++) {
     if (i != tid) {
+      // wait if thread i is currently pulling ticket
       while (enter[i])
         ;
+      // wait if thread i has a lower ticket number than us or
+      // wait if thread i has the same ticket number but a lower thread id
       while ((tickets[i] != 0) && ((tickets[tid] > tickets[i]) ||
                                    ((tickets[tid] == tickets[i]) && (tid > i))))
         ;
