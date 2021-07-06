@@ -132,11 +132,52 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ## 7 Deadlocks
 
-- Defining Deadlocks
-- Requirements for a Deadlock
-- Handling Deadlocks
-- Modelling Resource Allocations
-- **Banker's Algorithm**
+### Defining Deadlocks
+
+> ## Deadlock
+>
+> A **deadlock** is a program state in which execution cannot proceed because at least two threads are waiting for the release of a resource that the other thread currently holds. A deadlock is characterised by a cycle in the wait-for graph.
+
+### Requirements for a Deadlock
+
+1. **Mutual Exclusion:** Ressourcen werden exklusiv genutzt.
+2. **Hold and Wait:** Prozesse/Threads beanspruchen Zugriff auf Betriebsmittel und fordern zusätzlich Zugriff auf weitere an.
+3. **No Preemption:** Betriebsmittel werden ausschließlich durch die Prozesse/Threads freigegeben, die sie nutzen. 
+4. **Circular Wait:** Der Wait-For-Graph enthält einen Kreis.
+
+### Handling Deadlocks
+
+#### Prevention
+
+- **Pre-claiming:** All resources needed by a thread are requested (and allocated) at start time.
+    - 👍 Deadlock requirement 2 (Hold and Wait) cannot occur.
+    - 👎 In dynamic systems the overall demand is difficult to predict.
+    - 👎 Uneconomical because resources are occupied longer than needed.
+- **Overall Release at Request:** When requesting a resource a thread needs to release all resources it currently holds.
+    - 👍 Deadlock requirement 2 (*Hold and Wait*) cannot occur.
+    - 👍 *Circular Wait* is also prevented since a thread does not hold any resources when allocating a new one.
+- **Allocation by (Given) Order:** Resource are sorted $(\mathrm{Res}_1, \mathrm{Res}_2, \mathrm{Res}_3, ...)$ and resource allocation is performed in order only.
+    - 👍 *Circular Wait* is prevented.
+
+#### Avoidance
+
+...
+
+#### Detection
+
+...
+
+#### Resolution, Recovery
+
+...
+
+### Modelling Resource Allocations
+
+...
+
+### Banker's Algorithm
+
+...
 
 ## 8 Semaphores & Monitors
 
@@ -287,6 +328,8 @@ A new pthread does not start right after the invocation (as would be the case wi
 **Skizziere einen Deadlock in C.**
 
 ...
+
+----
 
 **Wie ist ein sicherer Zustand definiert?**
 
