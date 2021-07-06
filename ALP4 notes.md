@@ -111,10 +111,24 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ...
 
+### Classical Locks
+
 - Lock
 - Twofold lock
 - Twofold Lock with Primary Protection
 - Twofold Lock with Mutual Precedence
+- n-fold
+- Peterson
+- Dekker
+- Lamport's Bakery
+
+### Quality Criteria for Locks
+
+- Mutual Exclusion
+- Fairness
+- Low Overhead
+- Available in high-level language
+- No Deadlock
 
 ### Requirements for Protection of the Critical Section
 
@@ -169,9 +183,23 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ...
 
-### Modelling Resource Allocations
+### Resource Allocation Model
 
-...
+$$
+\begin{align*}
+T\text{ with }|T| = m\qquad &\text{Set of threads (or processes)}\\\\
+Rs\text{ with }|Rs| = n\qquad &\text{Set of resource types}\\\\
+\vec{v}:= (v_1, v_2, ..., v_n)\qquad &\text{Existing resources}\\\\
+A:=\begin{pmatrix}a_{11}&...&a_{1n}\\\vdots&&\vdots\\a_{m1}&...&a_{mn}\end{pmatrix}\qquad &\text{Current requests for resources}\\\\
+B:=\begin{pmatrix}b_{11}&...&b_{1n}\\\vdots&&\vdots\\b_{m1}&...&b_{mn}\end{pmatrix}\qquad &\text{Currently allocated resources}\\\\
+G:=\begin{pmatrix}g_{11}&...&g_{1n}\\\vdots&&\vdots\\g_{m1}&...&g_{mn}\end{pmatrix}\qquad &\text{Total requests}\\\\
+(T, Rs, \vec{v}, A, B)\qquad &\text{Current resource allocation}\\\\
+\vec{f}:= (f_1, f_2, ..., f_n)\quad\text{ with }\quad f_j=v_j -\sum_{i}b_{ij} \qquad&\text{Free resources = existing - allocated resources}\\\\
+R:= G-B\qquad&\text{Remaining requests = total - currently allocated}
+\end{align*}
+$$
+
+
 
 ### Banker's Algorithm
 
