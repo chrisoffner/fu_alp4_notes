@@ -132,8 +132,6 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ## 7 Deadlocks
 
-### Defining Deadlocks
-
 > ## Deadlock
 >
 > A **deadlock** is a program state in which execution cannot proceed because at least two threads are waiting for the release of a resource that the other thread currently holds. A deadlock is characterised by a cycle in the wait-for graph.
@@ -295,8 +293,6 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ...
 
-
-
 # Questions
 
 ## 1 Deadlocks
@@ -335,13 +331,19 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ...
 
+----
+
 **Ist jeder Deadlock ein unsicherer Zustand? Warum?**
 
 ...
 
+----
+
 **Ist jeder unsichere Zustand ein Deadlock? Warum?**
 
 ...
+
+----
 
 **Gegeben sei der folgende Systemzustand:**
 $$
@@ -359,31 +361,47 @@ $$
 
 ...
 
+----
+
 **Analysiere die Laufzeit vom Bankieralgorithmus.**
 
 ...
+
+----
 
 **Wie praktikabel ist eigentlich der Bankieralgorithmus?**
 
 ...
 
+----
+
 ## Semaphoren und Monitore
+
+----
 
 **Definiere eine Semaphore. Welche Operationen sind für eine Semaphore definiert?**
 
 ...
 
+----
+
 **Ist es wichtig, dass die Operationen aus der vorherigen Frage atomar ausgeführt werden?**
 
 ...
+
+----
 
 **Vergleiche Mutexe und Semaphoren. Was sind Gemeinsamkeiten und Unterschiede?**
 
 ...
 
+----
+
 **Was ist eine binäre Semaphore? Ist eine binäre Semaphore und ein Mutex dasselbe?**
 
 ...
+
+----
 
 **Beschreibe den Aufbau eines Monitors:**
 
@@ -393,11 +411,15 @@ $$
 
 ...
 
+----
+
 **Skizziere eine Lösung in Pseudocode zu der folgenden Aufgabe[^1]:**
 
 **Auf eine Datei wird durch mehrere Threads ausschließlich lesend zugegriffen. Die TIDs der Threads seien durch paarweise verschiedene natürliche Zahlen gegeben. Zu keinem Zeitpunkt darf jedoch die Summe der TIDs derjenigen Threads, welche aktuell auf die Datei zugreifen, eine initial fest gewählte Schranke $N \in \N$ überschreiten. Entwickle einen Monitor, welcher einen gemeinsamen Zugriff auf die Datei unter der eben genannten Einschränkung realisiert.**
 
 ...
+
+----
 
 ## Parallel Applications
 
@@ -522,8 +544,6 @@ $$
 **Betrachte das Beispiel RPCExample im Github-Repository https://github.com/FUB-HCC/WhiteBoard-Implementation-Examples und erkläre, wie das Beispiel funktioniert.**
 
 ...
-
-
 
 ----
 
