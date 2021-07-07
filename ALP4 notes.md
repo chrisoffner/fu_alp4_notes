@@ -265,7 +265,8 @@ $$
 #include <stdio.h>
 
 double MA[100][100], MB[100][100], MC[100][100];
-int i, row, col, size = 100;
+int i, row, col, size = 100; // <- Bad example from slides, count variables should be
+                             //    declared close to usage, see comment in line 32ff.
 
 // Initialise matrices MA and MB
 void init_matrices() {
@@ -290,13 +291,15 @@ int main() {
 
   // Run next block concurrently where each
   // thread gets its own row, col, and i
-#pragma omp parallel private(row, col, i)
-  {
+#pragma omp parallel private(row, col, i) // <- Bad example because count variables
+  {                                       //    are automatically private and should
+      									  //    be declared as "for (int i = 0; ...)"
+                                          //    in modern C style
     // Concurrent FOR loop where each threads gets
     // assigned a constant number of iterations
 #pragma omp for schedule(static)
     for (row = 0; row < size; row++) {
-      // All matrices share access to matrices and size
+      // Threads share access to matrices and size
 #pragma omp parallel shared(MA, MB, MC, size)
       {
         // Same as previously, concurrent FOR loop
@@ -312,10 +315,7 @@ int main() {
   print_MC();
   return 0;
 }
-
 ```
-
-
 
 ### Nested Parallel Regions
 
