@@ -95,7 +95,7 @@ int main(void) {
 
 Without some special methods not covered in this course, processes cannot access each others' memory, and therefore cannot effectively work on data where they need to continuously exchange information (as opposed to merely merging together separate results in the end). To achieve concurrency with shared memory, we make use of **threads**.
 
-## 4 Threads
+### Threads
 
 Unlike processes, which each contain their own unique process id and address space, threads of the same process share a common process id and "live" in the same address space. They share memory (heap) but each thread has its own stack.
 
@@ -107,9 +107,22 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ...
 
-### Mutual Exclusion
+## Mutual Exclusion
 
 ...
+
+### Anforderungen zur Sicherung kritischer Abschnitte
+
+- **Mutual Exclusion**
+    Der kritische Abschnitt wird durch gegenseitigen Ausschluss geschützt.
+- **Fairness**
+    Kein Thread/Prozess wird beim Zugang zum kritischen Abschnitt dauerhaft bevor- oder benachteiligt.
+- **Low Overhead**
+    Die Methode sollte keinen erheblichen Mehraufwand verursachen.
+- **Portability**
+    Die Lösung sollte auch in höheren Programmiersprachen nutzbar sein.
+- **Deadlock-free**
+    Sollte nicht zu Deadlocks führen.
 
 ### Classical Locks
 
@@ -121,14 +134,6 @@ A new pthread does not start right after the invocation (as would be the case wi
 - Peterson
 - Dekker
 - Lamport's Bakery
-
-### Quality Criteria for Locks
-
-- Mutual Exclusion
-- Fairness
-- Low Overhead
-- Available in high-level language
-- No Deadlock
 
 ### Requirements for Protection of the Critical Section
 
@@ -177,7 +182,9 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 #### Detection
 
-...
+A set of threads T is not in a deadlock if there exists an order of termination so that all requests of thread $i$ can be terminated by the free resources or by resources freed up by threads j, where $j<i$.
+
+We use the Banker's Algorithm in which we replace $R$ with $A$.
 
 #### Resolution, Recovery
 
@@ -185,25 +192,57 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ### Resource Allocation Model
 
+#### Model
+
 $$
 \begin{align*}
 T\text{ with }|T| = m\qquad &\text{Set of threads (or processes)}\\\\
 Rs\text{ with }|Rs| = n\qquad &\text{Set of resource types}\\\\
 \vec{v}:= (v_1, v_2, ..., v_n)\qquad &\text{Existing resources}\\\\
-A:=\begin{pmatrix}a_{11}&...&a_{1n}\\\vdots&&\vdots\\a_{m1}&...&a_{mn}\end{pmatrix}\qquad &\text{Current requests for resources}\\\\
+A:=\begin{pmatrix}a_{11}&...&a_{1n}\\\vdots&&\vdots\\a_{m1}&...&a_{mn}\end{pmatrix}\qquad &\text{Current resource requests}\\\\
 B:=\begin{pmatrix}b_{11}&...&b_{1n}\\\vdots&&\vdots\\b_{m1}&...&b_{mn}\end{pmatrix}\qquad &\text{Currently allocated resources}\\\\
-G:=\begin{pmatrix}g_{11}&...&g_{1n}\\\vdots&&\vdots\\g_{m1}&...&g_{mn}\end{pmatrix}\qquad &\text{Total requests}\\\\
+G:=\begin{pmatrix}g_{11}&...&g_{1n}\\\vdots&&\vdots\\g_{m1}&...&g_{mn}\end{pmatrix}\qquad &\text{Total resource requests}\\\\
 (T, Rs, \vec{v}, A, B)\qquad &\text{Current resource allocation}\\\\
 \vec{f}:= (f_1, f_2, ..., f_n)\quad\text{ with }\quad f_j=v_j -\sum_{i}b_{ij} \qquad&\text{Free resources = existing - allocated resources}\\\\
-R:= G-B\qquad&\text{Remaining requests = total - currently allocated}
+R:= G-B\qquad&\text{Remaining requests = total - currently allocated}\\\\
+\vec{a}_i, \vec{b}_i, \vec{g}_i, \vec{r}_i\qquad&\text{Row vectors for requests, etc., of thread $i$}\\\\
+\vec{x} \le \vec{y} \Longleftrightarrow \forall k\colon x_k \le y_k\qquad&\text{$\vec{x}\le \vec{y}$ if comparison holds for each component}
 \end{align*}
 $$
 
+#### Constraints
 
+1. Each resource type can be allocated only as often as it exists.
+    $\forall j\in\{1,...,n\}\colon\quad\sum_{i=1}^m b_{ij}\le v_j$
+2. Requests can only contain existing resources.
+    $\forall i\in\{1,...,m\}\quad\forall j\in\{1,...,n\}:\quad\begin{cases}a_{ij}+b_{ij}&\le v_{j}\\g_{ij}&\le v_j\end{cases}$
+3. Requesting threads are blocked until allocation.
+4. Only non-blocked threads can request another resource.
+
+#### States
+
+- Thread $T_i$ is blocked if the current request cannot be satisfied.
+    $a_i \not\le \vec{f}$
+    - The set of threads $T$ is in a deadlock if at any future point there exists a subset of threads whose requests cannot be satisfied by the resources *not* allocated to threads of $T$.
+- This subset of threads $\{T_i\mid i\in I\}$ is also said to be in a deadlock.
+
+#### Example
+
+...
 
 ### Banker's Algorithm
 
-...
+- Calculate the vector of the (currently) free resources.
+    $\vec{f} = \vec{v} - \sum_{i=1}^m b_{i}$ 
+- As long as there exists a thread that is not marked as *"terminated"*:
+    - Check for each thread $i$ whether the remaining requests can be met with the free resources: $\vec{r}_i \le \vec{f}$ ?
+    - If yes:
+        - Mark thread $i$ as *"terminated"*
+        - and add all resources occupied by it to the vector of free resources: $\vec{f} \leftarrow \vec{f} + \vec{b}_i$
+    - If no:
+        - Continue with the next thread $i+1$
+- Terminate the algorithm if all threads are marked as *"terminated"* or no thread can be marked.
+- The situation is safe if all threads have been marked as *"terminated"* and unsafe if not.
 
 ## 8 Semaphores & Monitors
 
@@ -217,7 +256,107 @@ $$
 
 ## 9 OpenMP
 
-...
+### Matrix Multiplication
+
+```c
+// Matrix Multiplication
+
+#include <omp.h>
+#include <stdio.h>
+
+double MA[100][100], MB[100][100], MC[100][100];
+int i, row, col, size = 100;
+
+// Initialise matrices MA and MB
+void init_matrices() {
+  // Init MA
+  for (i = 0; i < 100; i++)
+    for (int j = 0; j < 100; j++) {
+      MA[i][j] = (double)(i + j) + 1.0;
+      MB[i][j] = (double)(i + j) + 1.0;
+    }
+}
+
+// Print resulting matrix MC
+void print_MC() {
+  for (i = 0; i < 100; i++)
+    for (int j = 0; j < 100; j++)
+      printf("%f ", MC[i][j]);
+  printf("\n");
+}
+
+int main() {
+  init_matrices();
+
+  // Run next block concurrently where each
+  // thread gets its own row, col, and i
+#pragma omp parallel private(row, col, i)
+  {
+    // Concurrent FOR loop where each threads gets
+    // assigned a constant number of iterations
+#pragma omp for schedule(static)
+    for (row = 0; row < size; row++) {
+      // All matrices share access to matrices and size
+#pragma omp parallel shared(MA, MB, MC, size)
+      {
+        // Same as previously, concurrent FOR loop
+#pragma omp for schedule(static)
+        for (col = 0; col < size; col++) {
+          MC[row][col] = 0.0;
+          for (i = 0; i < size; i++)
+            MC[row][col] += MA[row][i] * MB[i][col];
+        }
+      }
+    }
+  }
+  print_MC();
+  return 0;
+}
+
+```
+
+
+
+### Nested Parallel Regions
+
+```c
+#include <omp.h>
+#include <stdio.h>
+
+// Let a single thread print its team's thread count
+void report_num_threads(int level) {
+#pragma omp single
+  printf("Level %d:\t%d threads in team.\n", level, omp_get_num_threads());
+}
+
+int main(void) {
+  // Allow nested thread creation
+  omp_set_nested(1);
+#pragma omp parallel num_threads(2)
+  {
+    // Print level 1 thread count
+    report_num_threads(1);
+#pragma omp parallel num_threads(2)
+    {
+      // Print level 2 thread count
+      report_num_threads(2);
+#pragma omp parallel num_threads(2)
+      // Print level 3 thread count
+      report_num_threads(3);
+    }
+  }
+}
+
+/* PRINTS OUT:
+Level 1:	2 threads in team.
+Level 2:	2 threads in team.
+Level 2:	2 threads in team.
+Level 3:	2 threads in team.
+Level 3:	2 threads in team.
+Level 3:	2 threads in team.
+Level 3:	2 threads in team.
+/*
+```
 
 ## 10 Parallel Programming with Message Passing
 

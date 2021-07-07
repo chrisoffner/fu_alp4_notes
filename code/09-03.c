@@ -1,5 +1,4 @@
-// simple program with openmp
-// Rauber, Ruenger: Parallele und vert. Prg.
+// Matrix Multiplication
 
 #include <omp.h>
 #include <stdio.h>
@@ -7,35 +6,39 @@
 double MA[100][100], MB[100][100], MC[100][100];
 int i, row, col, size = 100;
 
-void read_input() {
-  int j;
-
+// Initialise matrices MA and MB
+void init_matrices() {
+  // Init MA
   for (i = 0; i < 100; i++)
-    for (j = 0; j < 100; j++)
+    for (int j = 0; j < 100; j++) {
       MA[i][j] = (double)(i + j) + 1.0;
-
-  for (i = 0; i < 100; i++)
-    for (j = 0; j < 100; j++)
       MB[i][j] = (double)(i + j) + 1.0;
+    }
 }
 
-void write_output() {
-  int j;
-
+// Print resulting matrix MC
+void print_MC() {
   for (i = 0; i < 100; i++)
-    for (j = 0; j < 100; j++)
+    for (int j = 0; j < 100; j++)
       printf("%f ", MC[i][j]);
   printf("\n");
 }
 
 int main() {
-  read_input(); // MA, MB
+  init_matrices();
+
+  // Run next block concurrently where each
+  // thread gets its own row, col, and i
 #pragma omp parallel private(row, col, i)
   {
+    // Concurrent FOR loop where each threads gets
+    // assigned a constant number of iterations
 #pragma omp for schedule(static)
     for (row = 0; row < size; row++) {
+      // All matrices share access to matrices and size
 #pragma omp parallel shared(MA, MB, MC, size)
       {
+        // Same as previously, concurrent FOR loop
 #pragma omp for schedule(static)
         for (col = 0; col < size; col++) {
           MC[row][col] = 0.0;
@@ -45,7 +48,6 @@ int main() {
       }
     }
   }
-  write_output(); // MC
-
+  print_MC();
   return 0;
 }
