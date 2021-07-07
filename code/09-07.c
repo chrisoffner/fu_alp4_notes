@@ -4,7 +4,6 @@
 #include <omp.h>
 #include <stdio.h>
 
-
 int main(int argc, char *argv[]) {
   long long i;                   // loop variable
   long long num_terms = 500000L; // number of terms for estimating pi
