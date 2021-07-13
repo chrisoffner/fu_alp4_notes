@@ -179,6 +179,8 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ### Dining Philosophers Problem
 
+Explanation from https://www.youtube.com/watch?v=_ruovgwXyYs.
+
 <img src="ALP4 notes.assets/Philosophers.svg" alt="Philosophers" style="zoom: 50%;" />
 
 ### Handling Deadlocks
