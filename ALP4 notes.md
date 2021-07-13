@@ -177,9 +177,7 @@ A new pthread does not start right after the invocation (as would be the case wi
 3. **No Preemption:** Betriebsmittel werden ausschließlich durch die Prozesse/Threads freigegeben, die sie nutzen. 
 4. **Circular Wait:** Der Wait-For-Graph enthält einen Kreis.
 
-### Dining Philosophers Problem
-
-Explanation from https://www.youtube.com/watch?v=_ruovgwXyYs.
+### Dining Philosophers Problem[^yt_1]
 
 <img src="ALP4 notes.assets/Philosophers.svg" alt="Philosophers" style="zoom: 50%;" />
 
@@ -904,4 +902,6 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 ----
 
 [^1]: siehe Aufgabe 6.29 in Silberschatz, Abraham, Peter B. Galvin, and Greg Gagne. Operating System Concepts / Abraham Silberschatz ; Peter Baer Galvin ; Greg Gagne. 10. ed.
+
+[^yt_1]: [YouTube: Dining Philosophers](https://www.youtube.com/watch?v=_ruovgwXyYs)
 
