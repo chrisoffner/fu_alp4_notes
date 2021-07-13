@@ -50,7 +50,7 @@ The **machine model** represents the physical execution of a program on the hard
 >The assembly code of a program gets executed sequentially due to the automatic incrementation of the instruction pointer.
 
 ---
-## 3 Concurrency
+## Concurrency
 
 ### Process generation with `fork()`
 
@@ -141,15 +141,30 @@ A new pthread does not start right after the invocation (as would be the case wi
 - Solution should be portable across architectures and usable in higher level programming languages.
 - Solution must not lead to a **deadlock**.
 
-## 5 Parallelization
+## Parallelization
 
 ...
 
-## 6 Petri Nets
+## Petri Nets
 
 ...
 
-## 7 Deadlocks
+### Properties
+
+- **Reachability**
+    A part of the Petri net is reachable if there is a sequence of transitions able to fire at some point in time and leading to mark the places or one of the places of this part with tokens. This is interesting in order to decide if some part of the program code is executed or a sub-system is during operation of the whole system.
+- **Liveness**
+    Different types of liveness can be investigated, describing if the net or parts of the Petri net are able to show some actions by firing of transitions unless the final state is reached.
+    - Weak liveness is given if there is a transition that can fire and the firing of that transition enables the firing of (at least) one other transition.
+    - Strong liveliness is given when the weak liveliness applies to all transitions.
+- **Termination**
+    After a sequence of transitions the Petri net is no longer alive.
+- **Boundedness**
+    Indicates if parts of the Petri net show or may show an overload situation.
+- **Security**
+    A Petri net is secure, if an increase in capacities of a place does not lead to an increased possibility in firing of transitions.
+
+## Deadlocks
 
 > ## Deadlock
 >
@@ -244,7 +259,7 @@ $$
 - Terminate the algorithm if all threads are marked as *"terminated"* or no thread can be marked.
 - The situation is safe if all threads have been marked as *"terminated"* and unsafe if not.
 
-## 8 Semaphores & Monitors
+## Semaphores & Monitors
 
 ### Semaphores
 
@@ -263,13 +278,15 @@ void init(struct semaphore *s, int i) {
   s->count = i;    // set i = 1 for mutual exclusion
   s->queue = NULL; // start with empty queue
 }
-void wait(struct semaphore *s) {
+
+void wait(struct semaphore *s) { // unhelpfully called P in our slides
   s->count -= 1;     // decrement count of available resources
   if (s->count < 0) {
     block(s->queue); // enqueue thread
   }
 }
-void signal(struct semaphore *s) {
+
+void post(struct semaphore *s) { // unhelpfully called V in our slides
   s->count += 1;       // increment count of available resources
   if (s->count <= 0) {
     unblock(s->queue); // unblock first of queue
@@ -277,11 +294,59 @@ void signal(struct semaphore *s) {
 }
 ```
 
+#### Example execution
+
+The following example shows two threads $P_1$ and $P_2$ using a semaphore `sem` with initial value 2.
+
+|     Operation      | `count` | `queue` |  $P_1$  |  $P_2$  |
+| :----------------: | :-----: | :-----: | :-----: | :-----: |
+|                    |    2    |  empty  | execute | execute |
+| $P_1$: `wait(sem)` |    1    |  empty  | execute | execute |
+| $P_2$: `wait(sem)` |    0    |  empty  | execute | execute |
+| $P_1$: `wait(sem)` |   -1    | $(P_1)$ | blocked | execute |
+| $P_2$: `post(sem)` |    0    |  empty  | execute | execute |
+| $P_1$: `post(sem)` |    1    |  empty  | execute | execute |
+| $P_1$: `post(sem)` |    2    |  empty  | execute | execute |
+
+#### POSIX Semaphores
+
+```c
+#include <semaphore.h>
+
+// Initialization of a semaphore
+int sem_init(sem_t *sem, int pshared, unsigned int value);
+
+// Decrement counter and block thread if necessary
+int sem_wait(sem_t *sem);
+
+// Increment counter and unblock the first queued thread
+int sem_post(sem_t *sem);
+
+// Decrement counter and return without blocking. Return value indicates 
+// the success of the attempt to get access to the critical section.
+int sem_trywait (sem_t *sem);
+
+// Decrement counter and block thread if necessary, with abort after a given time.
+int sem_timedwait (sem_t *sem, const struct timespec *abs_timeout);
+```
+
+#### Producer and Consumer
+
+...
+
+#### Cigarette Smokers' Problem
+
+...
+
+#### Readers and Writers
+
+...
+
 ### Monitors
 
 ...
 
-## 9 OpenMP
+## OpenMP
 
 ### Matrix Multiplication
 
@@ -385,28 +450,28 @@ Level 3:	2 threads in team.
 /*
 ```
 
-## 10 Parallel Programming with Message Passing
+## Parallel Programming with Message Passing
 
 - Parallel programming with message passing
 - Foster's Design Methodology
 
-## 11 MPI – Message Passing Interface
+## MPI – Message Passing Interface
 
 ...
 
-## 12 MPI Group Communication and MPI 2
+## MPI Group Communication and MPI 2
 
 ...
 
-## 13—15 Design and Implementation of Parallel Applications
+## Design and Implementation of Parallel Applications
 
 ...
 
-## 16 From Concurrent to Parallel Programming
+## From Concurrent to Parallel Programming
 
 ...
 
-## 17 Communication Paradigms in Distributed Systems
+## Communication Paradigms in Distributed Systems
 
 ...
 
