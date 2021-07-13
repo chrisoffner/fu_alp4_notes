@@ -348,7 +348,7 @@ int sem_timedwait (sem_t *sem, const struct timespec *abs_timeout);
 
 ## OpenMP
 
-### Matrix Multiplication
+### Matrix Multiplication Example
 
 ```c
 // Matrix Multiplication
