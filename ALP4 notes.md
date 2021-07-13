@@ -177,6 +177,10 @@ A new pthread does not start right after the invocation (as would be the case wi
 3. **No Preemption:** Betriebsmittel werden ausschließlich durch die Prozesse/Threads freigegeben, die sie nutzen. 
 4. **Circular Wait:** Der Wait-For-Graph enthält einen Kreis.
 
+### Dining Philosophers Problem
+
+<img src="ALP4 notes.assets/Philosophers.svg" alt="Philosophers" style="zoom: 50%;" />
+
 ### Handling Deadlocks
 
 #### Prevention
@@ -622,7 +626,7 @@ $$
 
 ----
 
-**Analysiere die Laufzeit vom Bankieralgorithmus.**
+**Analysiere die Laufzeit des Bankieralgorithmus.**
 
 ...
 
@@ -682,11 +686,11 @@ $$
 
 ## Parallel Applications
 
-**Erkläre Foster’s Design Methodology! Welche vier Schritte werden dort genannt und was ist das Ziel jeden einzelnen Schritts?**
+**Erkläre Foster’s Design Methodology. Welche vier Schritte werden dort genannt und was ist das Ziel jedes einzelnen Schritts?**
 
 ...
 
-**Erkläre das BSP Model!**
+**Erkläre das BSP Model!*.
 
 ...
 
