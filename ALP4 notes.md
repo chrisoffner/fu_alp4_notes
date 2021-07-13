@@ -248,7 +248,34 @@ $$
 
 ### Semaphores
 
-...
+• A semaphore is a generalization of a lock variable, essentially a counting lock (counting variable + queue).
+• Unlike a lock, semaphores can provide access to the critical section for more than one thread or process.
+
+#### Example implementation in C
+
+```c
+struct semaphore {
+  int count;    // count of available resources
+  Queue *queue; // count >= 1: free, count <= 0: occupied
+};              // if count < 0: |count| is the number of waiting threads
+
+void init(struct semaphore *s, int i) {
+  s->count = i;    // set i = 1 for mutual exclusion
+  s->queue = NULL; // start with empty queue
+}
+void wait(struct semaphore *s) {
+  s->count -= 1;     // decrement count of available resources
+  if (s->count < 0) {
+    block(s->queue); // enqueue thread
+  }
+}
+void signal(struct semaphore *s) {
+  s->count += 1;       // increment count of available resources
+  if (s->count <= 0) {
+    unblock(s->queue); // unblock first of queue
+  }
+}
+```
 
 ### Monitors
 
@@ -806,3 +833,4 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 ----
 
 [^1]: siehe Aufgabe 6.29 in Silberschatz, Abraham, Peter B. Galvin, and Greg Gagne. Operating System Concepts / Abraham Silberschatz ; Peter Baer Galvin ; Greg Gagne. 10. ed.
+

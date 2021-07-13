@@ -1,19 +1,21 @@
 struct semaphore {
-  int count; // thread counter
-  Queue *wt; // count>=1: free, count<=0: occupied
-} 						// if count<0 : |count| is the 	
-						// number of waiting threads
-void init (semaphore *s, int i) {
-  s->count = i; // set i=1 for mutual exclusion
-  s->wt = NULL;
+  int count;    // count of available resources
+  Queue *queue; // count >= 1: free, count <= 0: occupied
+};              // if count < 0: |count| is the number of waiting threads
+
+void init(struct semaphore *s, int i) {
+  s->count = i;    // set i = 1 for mutual exclusion
+  s->queue = NULL; // start with empty queue
 }
-void P(semaphore *s) {
-  s->count--;
-  if (s->count < 0)
-    block(s->wt); // enqueue thread
+void wait(struct semaphore *s) {
+  s->count -= 1; // decrement count of available resources
+  if (s->count < 0) {
+    block(s->queue); // enqueue thread
+  }
 }
-void V(semaphore *s) {
-  s->count++;
-  if (s->count <= 0)
-    deblock(s->wt); // deblock first of queue
+void signal(struct semaphore *s) {
+  s->count += 1; // increment count of available resources
+  if (s->count <= 0) {
+    unblock(s->queue); // unblock first of queue
+  }
 }
