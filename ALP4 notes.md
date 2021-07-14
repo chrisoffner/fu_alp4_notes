@@ -694,7 +694,7 @@ $$
 
 ...
 
-**Erkläre das BSP Model!*.
+**Erkläre das BSP Model.**
 
 ...
 
@@ -907,7 +907,7 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 ## Erstklausur 2020
 
-### Grundlagen
+### Grundlagen (10 Punkte)
 
 **Nebenläufige Programmierung (8 Punkte)**
 
@@ -925,7 +925,7 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 ----
 
-### Gegenseitiger Ausschluss
+### Gegenseitiger Ausschluss (16 Punkte)
 
 **Implementierung einer Lösung (8 Punkte)**
 
@@ -989,7 +989,7 @@ int unlock (long tid) {
 
 ----
 
-### Verklemmungen
+### Verklemmungen (18 Punkte)
 
 **a) Bedingungen (4 Punkte)**
 
