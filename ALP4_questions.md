@@ -56,7 +56,7 @@ Ein sicherer Zustand liegt genau dann vor, wenn es eine Ausführungsreihenfolge 
 
 **Ist jeder Deadlock ein unsicherer Zustand? Warum?**
 
-Ja, denn ein Deadlock bedeutet, dass
+Ja, denn ein Deadlock bedeutet, dass Threads blockiert sind, aufeinander warten, und (ohne externe Intervention) nicht terminieren können.
 
 ----
 
@@ -72,7 +72,7 @@ R = \begin{pmatrix}2 & 1 & 2\\1&1&1\\2&2&0\\0&0&1\end{pmatrix},\quad G=\begin{pm
 $$
 **(i) Berechne mit dem Bankieralgorithmus, ob der angegebene Systemzustand *sicher* ist.**
 
-...
+Der Systemzustand ist sicher.
 
 **(ii) Angenommen der Thread $T_3$ stellt die Teilanforderung $\begin{pmatrix}1&0&0\end{pmatrix}$ an das System. Ist der Systemzustand nach der Erfüllung dieser Teilanforderung sicher? Sollte die Teilanforderung von $T_3$ erfüllt werden?**
 
