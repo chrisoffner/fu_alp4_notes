@@ -7,17 +7,17 @@
 **Welche vier Bedingungen müssen gelten, damit Deadlocks in einem System auftreten können?**
 
 1. **Mutual Exclusion:** Ressourcen werden exklusiv genutzt.
-2. **Hold and Wait:** Prozesse/Threads beanspruchen Zugriff auf Betriebsmittel und fordern zusätzlich Zugriff auf weitere an.
-3. **No Preemption:** Betriebsmittel werden ausschließlich durch die Prozesse/Threads freigegeben, die sie nutzen. 
+2. **Hold and Wait:** Prozesse/Threads halten Betriebsmittel und warten auf zusätzliche Betriebsmittel.
+3. **No Preemption:** Betriebsmittel können ausschließlich durch die Prozesse/Threads freigegeben werden, die sie nutzen.
 4. **Circular wait:** Der Wait-For-Graph enthält einen Kreis.
 
 ----
 
 **Inwiefern unterscheidet sich Deadlock Avoidance von Deadlock Prevention?**
 
-- Bei **Deadlock Avoidance** soll vermieden werden, dass ein System in einen *unsicheren Zustand* eintritt. Ein *unsicherer Zustand* besteht, wenn mindestens ein Thread noch ausstehende Zugriffsanfragen hat, die nicht mit den aktuell freien Betriebsmitteln befriedigt werden können.
-
-    - Ergreift Maßnahmen zur Vermeidung eines unsicheren Zustands basierend auf Kenntnis zukünftiger Betriebsmittelverfügbarkeit und -anfragen.
+- Bei **Deadlock Avoidance** soll vermieden werden, dass ein System in einen *unsicheren Zustand* eintritt. Ein *unsicherer Zustand* besteht, wenn keine Ausführungsreihenfolge existiert, bei der alle Threads die von ihnen benötigten Betriebsmittel erhalten und terminieren.
+- Prüft vor Ressourcenzuteilung, ob diese zu einem unsicheren Zustand führt, und vermeidet diese, falls dem so ist.
+    - Kenntnis über zukünftige Betriebsmittelverfügbarkeit und -anfragen nötig.
     - Nutzt Bankiersalgorithmus.
 
 - Bei **Deadlock Prevention** wird die Belegung von Betriebsmitteln so eingeschränkt, dass mindestens eine notwendige Bedingung für einen Deadlock gar nicht erst eintreten kann.
@@ -50,7 +50,7 @@ Die folgende Ausführungsreihenfolge führt zu einem Deadlock zwischen `t1` und 
 
 **Wie ist ein sicherer Zustand definiert?**
 
-Ein sicherer Zustand liegt genau dann vor, wenn es eine Ausführungsreihenfolge gibt, bei der alle Threads/Prozesse terminieren können.
+Ein sicherer Zustand liegt genau dann vor, wenn es eine Ausführungsreihenfolge gibt, bei der alle Threads/Prozesse alle Betriebsmittel bekommen, die sie anfragen, und terminieren können.
 
 ----
 
@@ -62,7 +62,7 @@ Ja, denn ein Deadlock bedeutet, dass Threads blockiert sind, aufeinander warten,
 
 **Ist jeder unsichere Zustand ein Deadlock? Warum?**
 
-...
+Ein unsicherer Zustand ist nicht notwendigerweise ein Deadlock, kann aber zu einem führen. Bei günstiger Ausführungsreihenfolge muss es aber nicht dazu kommen.
 
 ----
 
@@ -76,23 +76,23 @@ Der Systemzustand ist sicher.
 
 **(ii) Angenommen der Thread $T_3$ stellt die Teilanforderung $\begin{pmatrix}1&0&0\end{pmatrix}$ an das System. Ist der Systemzustand nach der Erfüllung dieser Teilanforderung sicher? Sollte die Teilanforderung von $T_3$ erfüllt werden?**
 
-...
+Ja, der Systemzustand ist sicher. Die Teilanforderung von $T_3$ kann erfüllt werden.
 
 **(iii)  Beantworte die vorherige Teilaufgabe für den Thread $T_2$ und die Teilanforderung $\begin{pmatrix}0&0&1\end{pmatrix}$.**
 
-...
+Nein, die Teilanforderung führt zu einem unsicheren Zustand und sollte im aktuellen Systemzustand nicht erfüllt werden.
 
 ----
 
 **Analysiere die Laufzeit des Bankieralgorithmus.**
 
-...
+$n^2\cdot m$, wobei $n$ die Anzahl der Threads und $m$ die Anzahl der Betriebsmittelarten ist.
 
 ----
 
 **Wie praktikabel ist eigentlich der Bankieralgorithmus?**
 
-...
+In der Praxis sind in dynamischen Programmen die Gesamtanfragen bzw. zukünftigen Betriebsmittelanfragen nicht bekannt, daher kann der Bankieralgorithmus dort nicht anwendbar.
 
 ----
 
@@ -102,25 +102,35 @@ Der Systemzustand ist sicher.
 
 **Definiere eine Semaphore. Welche Operationen sind für eine Semaphore definiert?**
 
-...
+- Struct mit count und queue
+- wait
+- post
 
 ----
 
 **Ist es wichtig, dass die Operationen aus der vorherigen Frage atomar ausgeführt werden?**
 
-...
+Ja, denn `wait` und `post` bilden jeweils einen kritischen Abschnitt, da sie die *shared resources* `count` und `queue` der Semaphore modifizieren. Bei nicht-atomarer Durchführung kann es zu inkorrektem Programmablauf kommen.
 
 ----
 
 **Vergleiche Mutexe und Semaphoren. Was sind Gemeinsamkeiten und Unterschiede?**
 
-...
+- Ein Mutex gestattet zu jedem Zeitpunkt nur einem Thread Zugriff auf die von ihm kontrollierte Ressource.
+- Bei Semaphoren bestimmt der Anfangswert von `count`, wie viele Threads gleichzeitig Zugriff erhalten können.
+- Ein Semaphor hat die Funktionen `wait` und `post`, während 
 
 ----
 
 **Was ist eine binäre Semaphore? Ist eine binäre Semaphore und ein Mutex dasselbe?**
 
-...
+Ein binärer Semaphor ist ein Semaphor, der mit `count = 1` initialisiert wird.
+
+Wird `sem_post()` nur vom Thread aufgerufen, der zuletzt `sem_wait()` aufgerufen hat, so fungiert ein binärer Semaphor praktisch wie ein Mutex.
+
+Konzeptionell ist die Synchronisationssemantik jedoch unterschiedlich, da ein Thread, der ein Mutex per `pthread_mutex_lock()` beansprucht hat, dieses "besitzt", bis er es per `pthread_mutex_unlock()` wieder freigibt.
+
+Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als dem, der `sem_wait()` aufgerufen hat, und eignet sich hiermit für viele Synchronisationsszwecke wie z.B. Producer-Consumer besser.
 
 ----
 

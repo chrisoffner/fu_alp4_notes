@@ -105,7 +105,9 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ### Critical Section
 
-...
+> ## Critical Section
+>
+> A program section (series of operations) that only one thread is permitted to execute at a time to ensure the correct execution of the program is called **critical section**.
 
 ## Mutual Exclusion
 
@@ -280,7 +282,7 @@ $$
 struct semaphore {
   int count;    // count of available resources
   Queue *queue; // count >= 1: free, count <= 0: occupied
-};              // if count < 0: |count| is the number of waiting threads
+};              // if count < 0: |count| = |queue| is the number of waiting threads
 
 void init(struct semaphore *s, int i) {
   s->count = i;    // set i = 1 for mutual exclusion
@@ -352,7 +354,8 @@ int sem_timedwait (sem_t *sem, const struct timespec *abs_timeout);
 
 ### Monitors
 
-...
+- A **monitor** is an object that guarantees mutual exclusion without requiring the programmer to explicitly insert lock and unlock operations.
+- It consists of procedures (methods/functions) and data structures that ensures that at any time it is used by not more than one thread.
 
 ## OpenMP
 
@@ -483,11 +486,11 @@ Level 3:	2 threads in team.
 
 ...
 
-## 18.1 Interprocess Communication
+## Interprocess Communication
 
 ...
 
-### 18.2 - 18.3 Remote Invocation
+### Remote Invocation
 
 #### Distribution Transparency
 
@@ -504,7 +507,7 @@ Level 3:	2 threads in team.
 
 ... 
 
-## 20 Peer-to-Peer Systems
+## Peer-to-Peer Systems
 
 ...
 
@@ -512,19 +515,19 @@ Level 3:	2 threads in team.
 
 ...
 
-### 20.2 Centralized, Pure and Hybrid P2P Systems
+### Centralized, Pure and Hybrid P2P Systems
 
 ...
 
-### 20.3 DHT-based P2P Systems
+### DHT-based P2P Systems
 
 ...
 
-### 20.4 P2P-based Whiteboard
+### P2P-based Whiteboard
 
 ...
 
-## 21 Cloud Computing
+## Cloud Computing
 
 ...
 
