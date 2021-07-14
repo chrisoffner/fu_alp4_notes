@@ -172,10 +172,14 @@ A new pthread does not start right after the invocation (as would be the case wi
 
 ### Requirements for a Deadlock
 
-1. **Mutual Exclusion:** Ressourcen werden exklusiv genutzt.
-2. **Hold and Wait:** Prozesse/Threads beanspruchen Zugriff auf Betriebsmittel und fordern zusätzlich Zugriff auf weitere an.
-3. **No Preemption:** Betriebsmittel werden ausschließlich durch die Prozesse/Threads freigegeben, die sie nutzen. 
-4. **Circular Wait:** Der Wait-For-Graph enthält einen Kreis.
+1. **Mutual Exclusion**
+    Ressourcen werden exklusiv genutzt.
+2. **Hold and Wait**
+    Prozesse/Threads beanspruchen Zugriff auf Betriebsmittel und fordern zusätzlich Zugriff auf weitere an.
+3. **No Preemption**
+    Betriebsmittel werden ausschließlich durch die Prozesse/Threads freigegeben, die sie nutzen. 
+4. **Circular Wait**
+    Der Wait-For-Graph enthält einen Kreis.
 
 ### Dining Philosophers Problem[^yt_1]
 
@@ -558,7 +562,7 @@ Level 3:	2 threads in team.
 
 # Questions
 
-## 1 Deadlocks
+## Deadlocks
 
 ----
 
@@ -901,7 +905,354 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 ----
 
+## Erstklausur 2020
+
+### Grundlagen
+
+**Nebenläufige Programmierung (8 Punkte)**
+
+**Sie programmieren ein Programm mit mehreren Threads, das auf einem System ausgeführt werden soll, welches eine nebenläufige Ausführung unterstützt. Worauf müssen Sie achten? Gehen Sie hierbei auf die Begriffe Korrektheit, deterministische Ausführung, determinierte Ausführung und kritischen Abschnitt im Sinne der Vorlesung ein.**
+
+...
+
+----
+
+**Programmiermodell (2 Punkte)**
+
+**Welche Modelle nutzen Sie bei der Programmierung und in welcher Beziehung müssen diese zu einander stehen, damit eine korrekte Ausführung im Sinne der Vorlesung sichergestellt ist?**
+
+...
+
+----
+
+### Gegenseitiger Ausschluss
+
+**Implementierung einer Lösung (8 Punkte)**
+
+**Gegeben sei die folgende Lösung zur Implementierung des gegenseitigen Ausschlusses für zwei Threads. Ist diese Lösung im Sinne der Vorlesung geeignet den gegenseitigen Ausschluss verlässlich sicherzustellen? Erfüllt die Lösung auch die anderen Anforderungen an Lösungen zum Schutz des kritischen Abschnitts, die in der Vorlesung genannt wurden? Begründen Sie Ihre Antwort.**
+
+```c
+#include ...
+#define NUM_THREADS 2
+char _lock[2];
+
+
+int lock (long tid) {
+    _lock[tid] = 1;
+
+    while (_lock[NUM_THREADS - 1 - tid]) {
+        _lock[tid] = 0;
+        sleep (1);
+        _lock[tid] = 1;
+        }
+
+return 0;
+}
+
+int unlock (long tid) {
+    
+    _lock[tid] = 0;
+    return 0;
+}
+```
+
+...
+
+----
+
+**Erweiterung einer Lösung (4 Punkte)**
+
+**Wenn die dargestellte Lösung nicht alle Anforderungen im Sinne der Vorlesung erfüllt, welche der in der Vorlesung vorgeschlagenen Lösungen, die nicht auf Betriebssystem- unterstützung zurückgreifen, würden Sie wählen? Begründen Sie Ihre Antwort.**
+
+***Hinweis:***
+***Sie können die Lösung beschreiben oder kurz skizzieren, indem Sie die Änderungen am Quell-Code der obigen Lösung angeben.***
+
+...
+
+----
+
+**Unterstützung für die Lösung (4 Punkte)**
+
+**Wann und warum kann es notwendig sein, Hardware- und Betriebssystemunterstützung für den Schutz des kritischen Abschnitts durch gegenseitigen Ausschluss einzufordern?**
+
+...
+
+----
+
+### Modellierung (2 Punkte)
+
+**Was modelliert dieses Petri-Netz?**
+
+<img src="ALP4 notes.assets/producerconsumernet.png" alt="producerconsumernet" style="zoom: 33%;" />
+
+...
+
+----
+
+### Verklemmungen
+
+**a) Bedingungen (4 Punkte)**
+
+**Nennen Sie alle vier Bedingungen für eine Verklemmung!**
+
+...
+
+----
+
+**b) Art der Ressource (3 Punkte)**
+
+**Wenn wir die CPU als Ressource betrachten, wann kann es nicht zu Verklemmungen kommen? Begründen Sie Ihre Antwort.**
+
+...
+
+----
+
+**c) Bankeralgorithmus (10 Punkte)**
+
+**In einem System mit 5 Prozessen und 4 Betriebsmitteln liege die folgende Betriebsmittelsituation vor mit $G$ für die Gesamtanforderungen, $B$ für die aktuell belegten Ressourcen und $\vec{v}$ als Vektor der grundsätzlich verfügbaren Ressourcen. Wenden Sie den Bankeralgorithmus entsprechend der Vorlesung an, um festzustellen, ob die Situation sicher ist. Geben Sie nach jedem Schritt den Vektor $\vec{f}$ der freien Betriebsmittel, sowie die Menge $DP$ der noch nicht terminierten Prozesse an.**
+$$
+G:= \begin{pmatrix}2&1&0&0\\5&4&2&1\\6&6&3&2\\5&3&1&3\\5&6&2&3\end{pmatrix},\qquad B:= \begin{pmatrix}2&0&0&0\\3&3&2&1\\1&1&1&1\\1&0&0&1\\1&2&0&2\end{pmatrix},\qquad \vec{v}:=\begin{pmatrix}8&7&3&5\end{pmatrix}
+$$
+...
+
+----
+
+**d) Bankeralgorithmus II (1 Punkt)**
+
+**Verändern Sie anschließend $\vec{v}$ derart, dass aus einer sicheren eine unsichere bzw. aus einer unsicheren eine sichere Situation wird, während die Gesamtanzahl der verfügbaren Ressourcen $\vec{v}$ unverändert bleibt!**
+
+...
+
+----
+
+### OpenMP (6 Punkte)
+
+**Ergänzen Sie das folgende Programm so, dass die jeweils äußeren `for`-Schleifen parallel ausgeführt werden. Nutzen Sie hierfür OpenMP und die geeignete Befehle aus der gegebenen Auswahl.**
+
+***Hinweise:***
+***Achten Sie darauf, welche Variablen wo benutzt werden sollen. Sie können die entsprechenden Nummern für die Quellcode-Zeile und den Befehl angeben. Es dürfen Befehle mehrfach verwendet werden. Nicht alle Befehle müssen eingesetzt werden.***
+
+**Befehle zur Implementierung der Lösung:**
+
+```c
+#pragma omp single
+#pragma omp parallel
+#pragma omp parallel shared (MA, MB, MC, size) private (row, col, i)
+#pragma omp parallel privat (MA, MB, MC, size) shared (row, col, i)
+#pragma omp for schedule (dynamic)
+#pragma omp for schedule (static)
+#pragma omp parallel for
+#pragma omp parallel for private (x) reduction (+:area)
+#pragma omp parallel sections
+#pragma omp section
+#pragma omp parallel end
+#pragma omp barrier
+```
+
+````c
+#include <omp.h>
+double MA[100][100], MB[100][100], MC[100][100];
+int i, row, col, size = 100;
+
+int main () {
+    read_input (); // MA, MB
+
+    {
+        
+        for (row = 0; row < size; row++) {
+            for (col = 0; col < size; col++)
+                MC[row][col] = 0.0;
+        }
+
+        for (row = 0; row < size; row++) {
+            for (col = 0; col < size; col++)
+                for (i = 0; i < size; i++)
+                    MC[row][col] += MA[row][i] * !???!
+        }
+    }
+  
+    write_output (); // MC
+    return 0;
+}
+
+````
+
+----
+
+### Parallele Programmierung (8 Punkte)
+
+**Nennen und erläutern Sie kurz im Sinne der Vorlesung die Schritte des Fosterschen Vorgehensmodells zur Entwicklung paralleler Programme am Beispiel der Implementierung eines parallelen Programms zur Matrizenmultiplikation.**
+
+...
+
+----
+
+### Kommunikation mit Sockets (4 Punkte)
+
+**Java stellt Bibliotheksklassen für die Benutzung von Sockets zur Verfügung. Skizzieren Sie den Code bis zu den Stellen, an denen Client und Server mit dem Austausch ihrer Anwendungsdaten beginnen! Achten Sie darauf, dass Client und Server Aktivitäten teilweise aufeinander aufbauend vornehmen und berücksichtigen Sie die zeitliche Reihenfolge.**
+
+**Befehle zur Implementierung der Lösung:**
+
+```java
+Socket s = new Socket(clientURL, clientPort);
+Socket s = new Socket(serverURL, serverPort);
+Socket s = client_s.accept();
+Socket s = server_s.accept();
+ServerSocket client_s = new ClientSocket(port);
+ServerSocket server_s = new ServerSocket(port);
+InputStream in = s.getInputStream();
+InputStream in = s.getInputStream(s);
+OutputStream out = s.getOutputStream();
+OutputStream out = s.getOutputStream(s);
+```
+
+| Client | Server |
+| ------ | ------ |
+|        |        |
+|        |        |
+|        |        |
+|        |        |
+|        |        |
+|        |        |
+|        |        |
+|        |        |
+
+----
+
+### JavaRMI (12 Punkte)
+
+**Betrachten Sie folgende Implementierung in Java.**
+
+```java
+import java.rmi.*;
+public interface Abs extends Remote {
+    public double abs(Complex x) throws RemoteException;}
+
+import java.rmi.*;
+public class AbsImpl implements Abs {
+    public double abs(Complex x) {
+        return Math.sqrt(x.re * x.re + x.im * x.im);}}
+
+import java.io.Serializable;
+public class Complex implements Serializable {
+    public double re, im;
+    public Complex(double re, double im) {
+        this.re = re;
+        this.im = im;}}
+```
+
+**Ausgabe (4 Punkte)**
+
+**Betrachten Sie folgende Zeile Code:**
+
+```java
+System.out.println(a.abs(new Complex(3, 4)));
+```
+
+**Wobei `a` ein lokales Objekt der `AbsImpl`-Klasse ist. Was wird auf der Konsole ausgegeben, wenn man die Zeile ausführt?**
+
+...
+
+----
+
+**Ablauf (6 Punkte)**
+
+**Beschreiben Sie in wenigen kurzen Sätzen, was (bezogen auf RMI) passiert, wenn das Objekt `a` aus a) auf ein entferntes `AbsImpl`-Objekt verweist und die Zeile Code ausgeführt wird.**
+
+...
+
+----
+
+**Nutzung nicht-serialisierbarer Objekte (2 Punkte)**
+
+**Was passiert bei der Ausführung der Zeile Code aus a), wenn `a` auf ein entferntes `AbsImpl`-Objekt verweist und die Klasse `Complex` NICHT das Interface `Serializable` implementiert?**
+
+...
+
+----
+
+### Web-Programmierung (6 Punkte)
+
+**Analysieren Sie die folgende Webseite und beantworten Sie diese Fragen:**
+
+```html
+<HTML>
+    <BODY>
+        <SCRIPT language="JavaScript">
+        function onSubmit() {
+            if(document.pressed == 'Insert')
+                document.myForm.action = "insert.html";
+            else if(document.pressed == 'Update')
+                document.myForm.action = "update.html";
+            return true; }
+        </SCRIPT>
+        <FORM name="myForm" onSubmit="return onSubmit();">
+            <INPUT type="submit" name="Operation" value="Insert"
+                onClick="document.pressed=this.value" >
+            <INPUT type="submit" name="Operation" value="Update"
+                onClick="document.pressed=this.value" >
+    </BODY>
+</HTML>
+```
+
+**Erscheinungsbild (1 Punkt)**
+**Wie ist das Erscheinungsbild der Webseite? Zeichnen Sie eine Skizze oder beschreiben Sie.**
+
+...
+
+----
+
+**Actions (2 Punkte)**
+**Welche actions kann der Benutzer auslösen, und was passiert dann?**
+
+...
+
+----
+
+**Objektzuordnung (1 Punkt)**
+**Auf welches DOM-Objekt bezieht sich in `<input …>` das jeweilige `this`?**
+
+...
+
+----
+
+**Eigenschaften des Objekts (1 Punkt)**
+
+**Welche Eigenschaften hat dieses Objekt (jeweils Name und Wert)?**
+
+…
+
+----
+
+**Ersetzung (1 Punkt)**
+**Kann man "pressed" überall durch "blablabla" ersetzen? Begründung!**
+
+...
+
+----
+
+### Services (6 Punkte)
+
+**Im Teil der verteilten Entwicklung haben wir immer wieder den Begriff Dienst verwendet, um damit Frage/Antwort-Beziehungen zwischen Client und Servern in verschiedenen Kontexten: (1) TCP Sockets, (2) RMI und (3) Web-Dienste.**
+
+**Nennen und erläutern Sie jeweils mindestens einen grundsätzlichen Unterschied (je 2 Punke) zwischen:**
+
+1. **a)  (1) und (2),**
+2. **b)  (2) und (3),**
+3. **c)  (1) und (3).**
+
+...
+
+----
+
+### Soundcloud (2 Punkte)
+
+**Anhand von Soundcloud haben wir eine typische Cloud-basierte Datenanalyseplattform kennengelernt. Nennen Sie zwei Gründe, warum sich das Data Analytics Team für die Verwendung einer Cloud-Lösung für die Verwaltung seiner Daten entschieden hat.**
+
+...
+
+----
+
 [^1]: siehe Aufgabe 6.29 in Silberschatz, Abraham, Peter B. Galvin, and Greg Gagne. Operating System Concepts / Abraham Silberschatz ; Peter Baer Galvin ; Greg Gagne. 10. ed.
 
 [^yt_1]: [YouTube: Dining Philosophers](https://www.youtube.com/watch?v=_ruovgwXyYs)
-
