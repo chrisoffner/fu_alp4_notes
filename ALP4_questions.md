@@ -384,7 +384,13 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 **Sie programmieren ein Programm mit mehreren Threads, das auf einem System ausgeführt werden soll, welches eine nebenläufige Ausführung unterstützt. Worauf müssen Sie achten? Gehen Sie hierbei auf die Begriffe Korrektheit, deterministische Ausführung, determinierte Ausführung und kritischen Abschnitt im Sinne der Vorlesung ein.**
 
-...
+Um das jeweilige Problem zuverlässig zu lösen, muss unser Programm die funktionale Anforderung der **Korrektheit** erfüllen. Hierfür muss unser Programmiermodell dem Ausführungsmodell, basiert auf dem Maschinenmodell, entsprechen.
+
+**Deterministische Ausführung** (bei welcher der Systemzustand stets gleich und in gleicher Reihenfolge verändert wird) ist bei nebenläufigen Programmen nicht gegeben, da nebenläufig ausgeführte Programminstruktionen in quasi-zufälliger Reihenfolge durchgeführt werden.
+
+**Determinierte Ausführung** (gleicher Input führt stets zu gleichem Output) ist im Allgemeinen jedoch nötig für korrekten Programmablauf.
+
+Als Programmierer müssen wir **kritische Abschnitte** identifizieren, auf die zu jedem Zeitpunkt jeweils nur ein Thread zugreifen darf, um Korrektheit sicherzustellen. Kritische Abschnitte beinhalten Programmabschnitte, in denen Threads auf gemeinsamen Ressourcen arbeiten. In diesen Programmabschnitten muss die Ausführung deterministisch sein.
 
 ----
 
@@ -392,7 +398,11 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 **Welche Modelle nutzen Sie bei der Programmierung und in welcher Beziehung müssen diese zu einander stehen, damit eine korrekte Ausführung im Sinne der Vorlesung sichergestellt ist?**
 
-...
+Programmieren bedeutet die (korrekte) Erstellung eines **Programmiermodells**.
+
+Für eine korrekte Programmausführung muss das Programmiermodell dem **Ausführungsmodell** entsprechen. 
+
+Dieses Ausführungsmodell basiert auf dem **Maschinenmodell**.
 
 ----
 
@@ -400,7 +410,7 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 **Implementierung einer Lösung (8 Punkte)**
 
-**Gegeben sei die folgende Lösung zur Implementierung des gegenseitigen Ausschlusses für zwei Threads. Ist diese Lösung im Sinne der Vorlesung geeignet den gegenseitigen Ausschluss verlässlich sicherzustellen? Erfüllt die Lösung auch die anderen Anforderungen an Lösungen zum Schutz des kritischen Abschnitts, die in der Vorlesung genannt wurden? Begründen Sie Ihre Antwort.**
+**Gegeben sei die folgende Lösung zur Implementierung des gegenseitigen Ausschlusses für zwei Threads. Ist diese Lösung im Sinne der Vorlesung geeignet, den gegenseitigen Ausschluss verlässlich sicherzustellen? Erfüllt die Lösung auch die anderen Anforderungen an Lösungen zum Schutz des kritischen Abschnitts, die in der Vorlesung genannt wurden? Begründen Sie Ihre Antwort.**
 
 ```c
 #include ...
@@ -415,9 +425,9 @@ int lock (long tid) {
         _lock[tid] = 0;
         sleep (1);
         _lock[tid] = 1;
-        }
+    }
 
-return 0;
+	return 0;
 }
 
 int unlock (long tid) {
@@ -427,18 +437,23 @@ int unlock (long tid) {
 }
 ```
 
-...
+- **Mutual Exclusion** wird durch diese Implementierung zuverlässig sichergestellt.
+
+- **Fairness** ist gegeben, da kein Thread dauerhaft bevor-/benachteiligt wird.
+- **Low Overhead** ist nicht gegeben, da `sleep(1)` hohe Wartezeiten verursacht. Zudem kann es bei sehr ungünstiger Ausführungsreihenfolge dazu kommen, dass beide Threads viele Male die `while`-Loop durchlaufen, bevor einer den kritischen Eintritt betreten darf.
+- **Portability** ist gegeben, da C hier als Hochsprache gilt.
+- **Deadlock-Freiheit** ist gegeben, da es hierbei zu keinem Kreis im Wait-For-Graph kommen kann.
 
 ----
 
 **Erweiterung einer Lösung (4 Punkte)**
 
-**Wenn die dargestellte Lösung nicht alle Anforderungen im Sinne der Vorlesung erfüllt, welche der in der Vorlesung vorgeschlagenen Lösungen, die nicht auf Betriebssystem- unterstützung zurückgreifen, würden Sie wählen? Begründen Sie Ihre Antwort.**
+**Wenn die dargestellte Lösung nicht alle Anforderungen im Sinne der Vorlesung erfüllt, welche der in der Vorlesung vorgeschlagenen Lösungen, die nicht auf Betriebssystemunterstützung zurückgreifen, würden Sie wählen? Begründen Sie Ihre Antwort.**
 
 ***Hinweis:***
 ***Sie können die Lösung beschreiben oder kurz skizzieren, indem Sie die Änderungen am Quell-Code der obigen Lösung angeben.***
 
-...
+Lamports Bakery-Algorithmus löst das Problem
 
 ----
 

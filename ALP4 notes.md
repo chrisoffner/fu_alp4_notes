@@ -126,7 +126,7 @@ A new pthread does not start right after the invocation (as would be the case wi
 - **Deadlock-free**
     Sollte nicht zu Deadlocks führen.
 
-### Classical Locks
+### Classical Lock Algorithms
 
 - Lock
 - Twofold lock
@@ -135,7 +135,48 @@ A new pthread does not start right after the invocation (as would be the case wi
 - n-fold
 - Peterson
 - Dekker
-- Lamport's Bakery
+
+#### Lamport's Bakery
+
+```c
+char enter[NUM_THREADS]; // expresses thread's desire to enter
+int tickets[NUM_THREADS];
+
+int lock(long tid) {
+  int max = 0;
+  enter[tid] = 1; // declare ticket pulling phase
+
+  // sets max to the highest ticket number
+  for (int i = 0; i < NUM_THREADS; i++) {
+    if (max < tickets[i]) {
+      max = tickets[i];
+    }
+  }
+  tickets[tid] = max + 1; // take the next available ticket
+  enter[tid] = 0;         // finished pulling ticket
+
+  for (int i = 0; i < NUM_THREADS; i++) {
+    if (i != tid) {
+      // wait if thread i is currently pulling ticket
+      while (enter[i])
+        ;
+      // wait if thread i has a lower ticket number than us or
+      // wait if thread i has the same ticket number but a lower thread id
+      while ((tickets[i] != 0) && ((tickets[tid] > tickets[i]) ||
+                                   ((tickets[tid] == tickets[i]) && (tid > i))))
+        ;
+    }
+  }
+  return 0;
+}
+
+int unlock(long tid) {
+  tickets[tid] = 0;
+  return 0;
+}
+```
+
+
 
 ### Requirements for Protection of the Critical Section
 
