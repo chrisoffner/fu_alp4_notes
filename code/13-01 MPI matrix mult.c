@@ -13,24 +13,8 @@ void print_results(char *prompt, int a[N][N]);
 
 int main(int argc, char *argv[]) {
   int i, j, k, rank, size, tag = 99, blksz, sum = 0;
-  int a[N][N] = {{1, 2, 3, 4},
-                 {5, 6, 7, 8},
-                 {9, 1, 2, 3},
-                 {
-                     4,
-                     5,
-                     6,
-                     7,
-                 }};
-  int b[N][N] = {{1, 2, 3, 4},
-                 {5, 6, 7, 8},
-                 {9, 1, 2, 3},
-                 {
-                     4,
-                     5,
-                     6,
-                     7,
-                 }};
+  int a[N][N] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 1, 2, 3}, {4, 5, 6, 7}};
+  int b[N][N] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 1, 2, 3}, {4, 5, 6, 7}};
   int c[N][N];
   int aa[N], cc[N];
 

@@ -552,7 +552,7 @@ Level 3:	2 threads in team.
     - gute Partitionierung:
         - höhere #Tasks als #CPUs
         - Minimierung redundanter Berechnungen/Datenstrukturen
-        - Tasks sind etwa gleiche groß/komplex
+        - Tasks sind etwa gleich groß/komplex
         - #Tasks wächst proportional zur Problemgröße
 2. **Communication**
     - Effiziente Kommunikation zwischen Tasks.
@@ -565,7 +565,7 @@ Level 3:	2 threads in team.
         - Kommunikation ist unabhängig voneinander -> nebenläufig
         - Tasks können nebenläufig ausgeführt werden -> keine permanenten Datenabhängigkeiten
 3. **Agglomeration**
-    - Gruppierung der Tasks, sodass #Tasks mit #CPUs korrespondiert.
+    - Gruppierung der Tasks, sodass #Gruppen mit #CPUs korrespondiert.
     - Erhöhung der Lokalität von Datennutzung -> gruppierte Tasks teilen sich Speicher
     - gute Agglomeration:
         - weniger Kommunikation zwischen Gruppen von Tasks

@@ -453,7 +453,7 @@ int unlock (long tid) {
 ***Hinweis:***
 ***Sie können die Lösung beschreiben oder kurz skizzieren, indem Sie die Änderungen am Quell-Code der obigen Lösung angeben.***
 
-Lamports Bakery-Algorithmus löst das Problem
+Lamports Bakery-Algorithmus löst das Problem des hohen Overheads, indem jedem Thread eine Wartenummer zugewiesen wird. Der Thread mit der kleinsten Wartenummer > 0 darf eintreten. Haben beide die gleiche Wartenummer, wird zufällig ein Thread ausgewählt (oder per Thread-ID entschieden, was allerdings nicht komplett fair wäre).
 
 ----
 
@@ -461,7 +461,13 @@ Lamports Bakery-Algorithmus löst das Problem
 
 **Wann und warum kann es notwendig sein, Hardware- und Betriebssystemunterstützung für den Schutz des kritischen Abschnitts durch gegenseitigen Ausschluss einzufordern?**
 
-...
+Hardware- / OS-Unterstützung bringen:
+
+- geringere Fehleranfälligkeit gegegenüber Programmierfehlern
+- bessere Performance, da busy waiting vermieden wird, indem wartende Threads geblockt werden
+- Berücksichtigung anderer impliziter Parallelisierungsmethoden (Reordering, Pipelining, etc.)
+
+Wenn diese Eigenschaften erwünscht sind, sollte Hardware- / OS-Unterstützung eingefordert werden.
 
 ----
 
@@ -471,7 +477,7 @@ Lamports Bakery-Algorithmus löst das Problem
 
 <img src="ALP4_questions.assets/producerconsumernet.png" alt="producerconsumernet" style="zoom: 33%;" />
 
-...
+Dieses Petri-Netz modelliert das Producer-Consumer-Pattern, mit einem Producer (links), einem Consumer (rechts) und einem "Behälter" (dazwischen). Der Producer produziert in einer endlosen Schleife Objekte, die er in den Behälter packt. Sobald es drei Produkte gibt, konsumiert der Consumer diese, und wartet auf die nächsten drei.
 
 ----
 
@@ -481,7 +487,10 @@ Lamports Bakery-Algorithmus löst das Problem
 
 **Nennen Sie alle vier Bedingungen für eine Verklemmung!**
 
-...
+1. **Mutual Exclusion**: Ressourcen werden exklusiv genutzt.
+2. **Hold and Wait**: Threads beanspruchen Zugriff auf Betriebsmittel und fordern zusätzlich Zugriff auf weitere an.
+3. **No Preemption**: Betriebsmittel werden ausschließlich durch die Threads freigegeben, die sie nutzen. 
+4. **Circular Wait**: Der Wait-For-Graph enthält einen Kreis.
 
 ----
 
@@ -489,7 +498,7 @@ Lamports Bakery-Algorithmus löst das Problem
 
 **Wenn wir die CPU als Ressource betrachten, wann kann es nicht zu Verklemmungen kommen? Begründen Sie Ihre Antwort.**
 
-...
+Wenn nur *eine* CPU (= ein Kern) existiert, sodass dieser zu jedem Zeitpunkt von nur einem Thread beansprucht werden kann, dann ist es nicht möglich, dass der Wait-For-Graph einen Kreis enthält.
 
 ----
 
@@ -499,7 +508,7 @@ Lamports Bakery-Algorithmus löst das Problem
 $$
 G:= \begin{pmatrix}2&1&0&0\\5&4&2&1\\6&6&3&2\\5&3&1&3\\5&6&2&3\end{pmatrix},\qquad B:= \begin{pmatrix}2&0&0&0\\3&3&2&1\\1&1&1&1\\1&0&0&1\\1&2&0&2\end{pmatrix},\qquad \vec{v}:=\begin{pmatrix}8&7&3&5\end{pmatrix}
 $$
-...
+Ja, der Zustand ist sicher! $DP = \emptyset$.
 
 ----
 
@@ -507,13 +516,13 @@ $$
 
 **Verändern Sie anschließend $\vec{v}$ derart, dass aus einer sicheren eine unsichere bzw. aus einer unsicheren eine sichere Situation wird, während die Gesamtanzahl der verfügbaren Ressourcen $\vec{v}$ unverändert bleibt!**
 
-...
+$\vec{v} = \begin{pmatrix}23&0&0&0\end{pmatrix}$
 
 ----
 
 ### OpenMP (6 Punkte)
 
-**Ergänzen Sie das folgende Programm so, dass die jeweils äußeren `for`-Schleifen parallel ausgeführt werden. Nutzen Sie hierfür OpenMP und die geeignete Befehle aus der gegebenen Auswahl.**
+**Ergänzen Sie das folgende Programm so, dass die jeweils äußeren `for`-Schleifen parallel ausgeführt werden. Nutzen Sie hierfür OpenMP und die geeigneten Befehle aus der gegebenen Auswahl.**
 
 ***Hinweise:***
 ***Achten Sie darauf, welche Variablen wo benutzt werden sollen. Sie können die entsprechenden Nummern für die Quellcode-Zeile und den Befehl angeben. Es dürfen Befehle mehrfach verwendet werden. Nicht alle Befehle müssen eingesetzt werden.***
@@ -542,14 +551,14 @@ int i, row, col, size = 100;
 
 int main () {
     read_input (); // MA, MB
-
+#pragma omp parallel shared (MA, MB, MC, size) private (row, col, i)
     {
-        
+        #pragma omp for schedule (static)
         for (row = 0; row < size; row++) {
             for (col = 0; col < size; col++)
                 MC[row][col] = 0.0;
-        }
-
+        } #pragma omp barrier
+		#pragma omp for schedule (static)
         for (row = 0; row < size; row++) {
             for (col = 0; col < size; col++)
                 for (i = 0; i < size; i++)
@@ -557,7 +566,7 @@ int main () {
         }
     }
   
-    write_output (); // MC
+    write_output(); // MC
     return 0;
 }
 
@@ -569,7 +578,27 @@ int main () {
 
 **Nennen und erläutern Sie kurz im Sinne der Vorlesung die Schritte des Fosterschen Vorgehensmodells zur Entwicklung paralleler Programme am Beispiel der Implementierung eines parallelen Programms zur Matrizenmultiplikation.**
 
-...
+Seien $A, B$ die zu multiplizierenden Matrizen und $C$ die Ergebnismatrix.
+
+1. **Partitioning**
+    - Aufteilung des Gesamtproblems in möglichst viele unabhängige Tasks.
+    - Jede Zelle in $C$ ist das Skalarprodukt einer Zeile von $A$ und einer Spalte von $B$.
+    - Ein Task kann z.B. ein solches Skalarprodukt sein.
+2. **Communication**
+    - Bestimmung der nötigen Channels zur Kommunikation zwischen Tasks.
+    - **Scatter:** Root-Prozess übergibt jeweils eine Zeile aus $A$ und eine Spalte aus $B$ an jeden Skalarprodukt-Task.
+    - **Gather:** Am Ende übergeben alle Tasks ihr Ergebnis (Eintrag in $C$) wieder an den Root-Prozess.
+3. **Agglomeration**
+    - Gruppierung der Tasks, sodass #Gruppen mit #CPUs korrespondiert.
+    - Tasks, die dieselben Daten benutzen, z.B. die gleiche Zeile aus $A$, sollten als Prozess gruppiert werden.
+    - Alle Skalarproduktberechnungen sind unabhängig, es gibt keine Datenabhängigkeit.
+    - Bei großen oder nicht-quadratischen Matrizen kann es effizienter sein, nich die gesamte Matrix $B$ zu versenden, sondern nur gewisse Spalten:
+        <img src="ALP4_questions.assets/matrixSend.png" alt="matrixSend" style="zoom:33%;" />
+4. **Mapping**
+    - Zuweisung gruppierter Tasks an einzelne CPUs.
+    - CPU-Auslastung soll maximiert werden, indem ähnlich viele Taskgruppen wie CPUs gibt.
+    - In unserem Fall findet Kommunikation nur zwischen Root-Prozess und Skalarprodukt-Prozessen statt.
+    - Kommunikationsaufwand soll minimiert werden, in dem Root-Prozess "zentriert" lokalisiert wird.
 
 ----
 
@@ -592,16 +621,16 @@ OutputStream out = s.getOutputStream();
 OutputStream out = s.getOutputStream(s);
 ```
 
-| Client | Server |
-| ------ | ------ |
-|        |        |
-|        |        |
-|        |        |
-|        |        |
-|        |        |
-|        |        |
-|        |        |
-|        |        |
+| Client                                          | Server                                            |
+| ----------------------------------------------- | ------------------------------------------------- |
+|                                                 | `ServerSocket server_s = new ServerSocket(port);` |
+| `Socket s = new Socket(serverURL, serverPort);` |                                                   |
+|                                                 | `Socket s = server_s.accept();`                   |
+| `OutputStream out = s.getOutputStream();`       |                                                   |
+| `InputStream in = s.getInputStream();`          |                                                   |
+|                                                 | `OutputStream out = s.getOutputStream();`         |
+|                                                 | `InputStream in = s.getInputStream();`            |
+|                                                 |                                                   |
 
 ----
 
@@ -637,7 +666,7 @@ System.out.println(a.abs(new Complex(3, 4)));
 
 **Wobei `a` ein lokales Objekt der `AbsImpl`-Klasse ist. Was wird auf der Konsole ausgegeben, wenn man die Zeile ausführt?**
 
-...
+Auf der Konsole wird die Zahl `5` ausgedruckt. Auf dem lokalen Objekt `a` wird die Methode `abs()` mit einem neu erzeugten, ebenfalls lokalen Objekt der `Complex`-Klasse aufgerufen. Alles findet hier lokal statt.  
 
 ----
 
@@ -645,7 +674,19 @@ System.out.println(a.abs(new Complex(3, 4)));
 
 **Beschreiben Sie in wenigen kurzen Sätzen, was (bezogen auf RMI) passiert, wenn das Objekt `a` aus a) auf ein entferntes `AbsImpl`-Objekt verweist und die Zeile Code ausgeführt wird.**
 
-...
+1. Aufrufendes Objekt ruft die Methode `abs()` auf dem lokalen Stub von `a` auf.
+2. Stub marshalled/serialisiert den call type und das Argument `new Complex(3, 4) in eine request message
+3. Lookup der Referenz des Remote-Objekts `a` im Remote Reference Module.
+4. Communication module schickt Message per Netzwerk an Server und blockt den aufrufenden Client-Thread.
+5. Communication module des Servers empfängt die Message.
+6. Dispatcher leitet die Nachricht an das zuständige Skeleton weiter.
+7. Skeleton unmarshalled die Nachricht und ruft Methode mit Argumenten auf dem called object auf.
+8. Called object führt die Berechnung aus und gibt Ergebnis zurück an das Skeleton.
+9. Skeleton marshalled Rückgabe in eine response message.
+10. Skeleton verschickt die Antwort via communication module zurück an den Client.
+11. Client stub erhält von communication moule die response message.
+12. Stub unmarshalled das Rückgabeergebnis des Funktionsaufrufs, gibt es an das aufrufende Objekt, und unblocked den Thread.
+13. Aufrufender Thread führt weiter aus.
 
 ----
 
@@ -653,7 +694,7 @@ System.out.println(a.abs(new Complex(3, 4)));
 
 **Was passiert bei der Ausführung der Zeile Code aus a), wenn `a` auf ein entferntes `AbsImpl`-Objekt verweist und die Klasse `Complex` NICHT das Interface `Serializable` implementiert?**
 
-...
+Eine `NotSerializableException` wird geworfen.
 
 ----
 
@@ -684,21 +725,24 @@ System.out.println(a.abs(new Complex(3, 4)));
 **Erscheinungsbild (1 Punkt)**
 **Wie ist das Erscheinungsbild der Webseite? Zeichnen Sie eine Skizze oder beschreiben Sie.**
 
-...
+Die Seite enthält lediglich zwei Buttons:
+
+`Insert` `Update`
 
 ----
 
 **Actions (2 Punkte)**
 **Welche actions kann der Benutzer auslösen, und was passiert dann?**
 
-...
+- Ein Klick auf `Insert` ruft die Datei `insert.html` auf.
+- Ein Klick auf `Update` ruft die Datei `update.html` auf.
 
 ----
 
 **Objektzuordnung (1 Punkt)**
 **Auf welches DOM-Objekt bezieht sich in `<input …>` das jeweilige `this`?**
 
-...
+Auf das jeweilige `<input>`-Objekt. Einmal das mit `value="Insert"`, einmal das mit `value="Update"`.
 
 ----
 
@@ -706,14 +750,15 @@ System.out.println(a.abs(new Complex(3, 4)));
 
 **Welche Eigenschaften hat dieses Objekt (jeweils Name und Wert)?**
 
-…
+- name="Operation" value="Insert"
+- name="Operation" value="Update"
 
 ----
 
 **Ersetzung (1 Punkt)**
 **Kann man "pressed" überall durch "blablabla" ersetzen? Begründung!**
 
-...
+Ja, denn `pressed` ist lediglich eine Variable.
 
 ----
 
@@ -723,11 +768,23 @@ System.out.println(a.abs(new Complex(3, 4)));
 
 **Nennen und erläutern Sie jeweils mindestens einen grundsätzlichen Unterschied (je 2 Punke) zwischen:**
 
-1. **a)  (1) und (2),**
-2. **b)  (2) und (3),**
-3. **c)  (1) und (3).**
+**a)  (1) und (2),**
 
-...
+**b)  (2) und (3),**
+
+**c)  (1) und (3).**
+
+- **TCP Sockets vs. RMI**
+    - TCP-Sockets können auch für Low-Level-Aufgaben in procedural languages genutzt werden, während RMI auf Basis objektorientierter Programmierung funktioniert.
+    - Expliziter Nachrichtenaustausch per TCP vs. impliziter (verborgener)Nachrichtenaustausch bei RMI
+    - RMI ist programmiersprachenabhängig, TCP ist davon unabhängig
+- **RMI vs. Web-Services**
+    - Web-Services sind plattform- und sprachenheterogen, RMI hingegen benötigt i.d.R. eine JVM.
+    - Web-Services unterstützen asynchrone Operationen, RMI generell nicht.
+- **TCP Sockets vs. Web-Services**
+    - Web-Services können synchrone Operationen unterstützen, TCP-Sockets kommunizieren asynchron.
+    - Web-Services arbeiten auf dem Application Layer, TCP-Sockets auf dem Transport Layer.
+    - Web-Services haben daher deutlich höheren Overhead.
 
 ----
 
@@ -735,7 +792,9 @@ System.out.println(a.abs(new Complex(3, 4)));
 
 **Anhand von Soundcloud haben wir eine typische Cloud-basierte Datenanalyseplattform kennengelernt. Nennen Sie zwei Gründe, warum sich das Data Analytics Team für die Verwendung einer Cloud-Lösung für die Verwaltung seiner Daten entschieden hat.**
 
-...
+- Kostenersparnis durch Vermeidung von Anschaffung und Wartung eigener Server
+- Einfachere Skalierung mit steigendem Bedarf
+- Abstraktion ermöglicht einfachere Bedienung auch durch NichtprogrammiererInnen
 
 ----
 
