@@ -575,7 +575,41 @@ Level 3:	2 threads in team.
 
 ### RMI - Remote Method Invocation
 
-...
+1. Caller calls a local procedure implemented by the stub
+2. Stub marshalls call type and the input arguments into a request message
+3. Stub sends the message over the network to the server and blocks the current execution thread
+4. Server skeleton receives the request message from the network
+5. Skeleton unpacks call type from the request message and looks up the procedure on the called object
+6. Skeleton unmarshalls procedure arguments
+7. Skeleton executes the procedure on the called object
+8. Called object performs a computation and returns the result
+9. Skeleton packs the output arguments into a response message
+10. Skeleton sends the message over the network back to the client
+11. Client stub receives the response message from the network
+12. Stub unpacks output arguments from the message
+13. Stub passes output arguments to the caller, releases execution thread and caller then continues in execution
+
+#### Stub
+
+**Responsibilities of the stub**
+
+- initiating communication towards the server skeleton
+- translating calls from the caller object
+- marshalling of the parameters
+- informing the skeleton that the call should be invoked
+- passing arguments to the skeleton over the network
+- unmarshalling of the response from the skeleton
+- informing the caller that the call is complete
+
+#### Skeleton
+
+**Responsibilities of the skeleton**
+
+- translating incoming data from the stub to the correct up-calls to server objects
+- unmarshalling of the arguments from received data
+- passing arguments to server objects
+- marshalling of the returned values from server objects
+- passing values back to the client stub over the network
 
 #### Java RMI
 
