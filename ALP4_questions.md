@@ -140,7 +140,11 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 - **Welche Operationen sind für einen Monitor definiert?**
 
-...
+1. Mutex und Condition-Variablen.
+2. `cwait(c)` process releases the monitor and waits for the following `csignal(c)`, i.e. the occurrence of condition `c`. It then continues in the monitor. The process is blocked in any case.
+    `csignal(c)` A waiting process is released. The monitor is occupied again. If there is no waiting process, the procedure has no effect.
+
+❓❓❓❓❓
 
 ----
 
@@ -148,7 +152,7 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 **Auf eine Datei wird durch mehrere Threads ausschließlich lesend zugegriffen. Die TIDs der Threads seien durch paarweise verschiedene natürliche Zahlen gegeben. Zu keinem Zeitpunkt darf jedoch die Summe der TIDs derjenigen Threads, welche aktuell auf die Datei zugreifen, eine initial fest gewählte Schranke $N \in \N$ überschreiten. Entwickle einen Monitor, welcher einen gemeinsamen Zugriff auf die Datei unter der eben genannten Einschränkung realisiert.**
 
-...
+❓❓❓❓❓
 
 ----
 
@@ -156,7 +160,10 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 **Erkläre Foster’s Design Methodology. Welche vier Schritte werden dort genannt und was ist das Ziel jedes einzelnen Schritts?**
 
-...
+1. **Partitioning**: Teilung des Problemraums in möglichst viele unabhängige Programm- oder Datenteile.
+2. **Communication**: Effiziente Kommunikation zwischen Tasks.
+3. **Agglomeration**: Gruppierung von Tasks, sodass #Tasks mit #CPUs korrespondiert, Erhöhung von Datenlokalität.
+4. **Mapping**: Zuweisung gruppierter Tasks an einzelne CPUs zur maximalen CPU-Auslastung.
 
 **Erkläre das BSP Model.**
 

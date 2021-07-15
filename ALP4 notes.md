@@ -352,10 +352,12 @@ int sem_timedwait (sem_t *sem, const struct timespec *abs_timeout);
 
 ...
 
-### Monitors
+### Monitors ❓❓❓❓❓
 
 - A **monitor** is an object that guarantees mutual exclusion without requiring the programmer to explicitly insert lock and unlock operations.
 - It consists of procedures (methods/functions) and data structures that ensures that at any time it is used by not more than one thread.
+- A monitor consists of a mutex (lock) object and condition variables.
+- Conceptually a **condition variable** is a queue of threads, associated with a mutex, on which a thread may wait for some condition to become true.
 
 ## OpenMP
 
@@ -463,8 +465,21 @@ Level 3:	2 threads in team.
 
 ## Parallel Programming with Message Passing
 
-- Parallel programming with message passing
-- Foster's Design Methodology
+### Implicit Parallel Processing with Shared Memory
+
+...
+
+### Explicit Parallel Processing with Shared Memory
+
+...
+
+### Parallel Computing
+
+...
+
+### Programming with Shared Memory vs. Message Passing
+
+...
 
 ## MPI – Message Passing Interface
 
@@ -477,6 +492,62 @@ Level 3:	2 threads in team.
 ## Design and Implementation of Parallel Applications
 
 ...
+
+### Foster's Design Methodology
+
+<img src="ALP4 notes.assets/fostersmethodology.png" alt="fostersmethodology" style="zoom:33%;" />
+
+- Basiert auf **Task/Channel model**
+- **Task:** Ein Task ist ein Teil der Anwendung mit eigenem Addressbereich (Prozess)
+- **Channel:** Message-Queue zwischen zwei Tasks
+- Tasks können miteinander über Channels kommunizieren
+- **Synchronous Receive:** Tasks blocken, während sie auf Empfang einer Nachricht warten.
+- **Asynchronous Send:** Beim Senden warten Tasks nicht, bis die Nachricht empfangen wurde.
+
+#### Four Steps
+
+1. **Partitioning**
+    - Teilung des Problemraums in möglichst viele unabhängige Programm- oder Datenteile.
+    - gute Partitionierung:
+        - höhere #Tasks als #CPUs
+        - Minimierung redundanter Berechnungen/Datenstrukturen
+        - Tasks sind etwa gleiche groß/komplex
+        - #Tasks wächst proportional zur Problemgröße
+2. **Communication**
+    - Effiziente Kommunikation zwischen Tasks.
+    - *local communication:* zwischen zwei Tasks
+    - *global communication:* Nachricht von einem Task an viele/alle andere Tasks
+    - durch Betrachtung der Relationen zwischen Tasks werden Channels modelliert
+    - gute Kommunikation:
+        - Kommunikationsaufwand zwischen Tasks ähnlich verteilt
+        - Kommunikation mit kleiner Anzahl von Nachbarn
+        - Kommunikation ist unabhängig voneinander -> nebenläufig
+        - Tasks können nebenläufig ausgeführt werden -> keine permanenten Datenabhängigkeiten
+3. **Agglomeration**
+    - Gruppierung der Tasks, sodass #Tasks mit #CPUs korrespondiert.
+    - Erhöhung der Lokalität von Datennutzung -> gruppierte Tasks teilen sich Speicher
+    - gute Agglomeration:
+        - weniger Kommunikation zwischen Gruppen von Tasks
+        - mehr Datenlokalität
+        - Skalierbarkeit
+        - Gruppen haben ähnliche Komplexität, Zeit- und Kommunikationsaufwand
+4. **Mapping**
+    - Zuweisung gruppierter Tasks an einzelne CPUs.
+    - CPUs sollten maximal ausgelastet werden.
+
+### Bulk Synchronous Parallel (BSP) Model
+
+<img src="ALP4 notes.assets/bsp.png" alt="bsp" style="zoom: 67%;" />
+
+- Programming model for parallel applications.
+- Can also be used to evaluate performance of parallel programs.
+- Computational work is split into super steps.
+- In a **super step** all relevant processes calculate in parallel and send intermediate results between themselves.
+- Each super step ends with a **barrier synchronization** that ensures that every process works on valid data.
+- Performance of a parallel program can be modelled using sequence of super steps and their execution time.
+- Communication costs are modeled via broadcast communication and barrier synchronization.
+- Performance of a parallel program depends heavily on the balanced distribution of computation between all processes.
+- Synchronization (with broadcast communication) may lead to temporary network overload.
 
 ## From Concurrent to Parallel Programming
 
@@ -492,9 +563,12 @@ Level 3:	2 threads in team.
 
 ### Remote Invocation
 
-#### Distribution Transparency
+...
+
+#### Transparency
 
 - Access Transparency
+- Distribution Transparency
 - Location Transparency
 - Migration Transparency
 - Replication Transparency
@@ -503,7 +577,9 @@ Level 3:	2 threads in team.
 
 ...
 
-### Java RMI
+#### Java RMI
+
+Java RMI is a Java API that performs **remote method invocation**, the object-oriented equivalent of remote procedure calls (**RPC**), with support for direct transfer of serialized Java classes and distributed garbage-collection.
 
 ... 
 
