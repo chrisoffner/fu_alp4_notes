@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
     strcpy(msg, "Hello ");
     MPI_Send(msg, strlen(msg) + 1, MPI_CHAR, 1, tag, MPI_COMM_WORLD);
   }
+  
   if (my_rank == 1)
     MPI_Recv(msg, 20, MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status);
 

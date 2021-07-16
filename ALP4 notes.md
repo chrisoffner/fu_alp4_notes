@@ -178,12 +178,6 @@ int unlock(long tid) {
 
 
 
-### Requirements for Protection of the Critical Section
-
-- Solution has to protect the critical section reliably by **mutual exclusion**.
-- Solution should be portable across architectures and usable in higher level programming languages.
-- Solution must not lead to a **deadlock**.
-
 ## Parallelization
 
 ...

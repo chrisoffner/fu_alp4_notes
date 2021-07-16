@@ -1,16 +1,18 @@
 // Sieve of Erastosthenes
 // Quinn: Parallel Prg. in C with MPI and OpenMP
 
-#include "MyMPI.h"
 #include <math.h>
 #include <mpi.h>
 #include <stdio.h>
 
-#define MIN (a, b)((a) < (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define BLOCK_LOW(id, p, n) ((id) * (n) / (p))
+#define BLOCK_HIGH(id, p, n) (BLOCK_LOW((id) + 1, p, n))
+#define BLOCK_SIZE(id, p, n) (BLOCK_LOW((id) + 1, p, n) - BLOCK_LOW((id), p, n))
 
 int main(int argc, char *argv[]) {
   int count, first, global_count, high_value, i, id, index, low_value, n, p,
-      proc0_size, prime, size;
+      proc0_size, k, size;
   double elapsed_time;
   char *marked;
 
@@ -58,29 +60,29 @@ int main(int argc, char *argv[]) {
     marked[i] = 0;
   if (!id)
     index = 0;
-  prime = 2;
+  k = 2;
 
   do {
-    if (prime * prime > low_value)
-      first = prime * prime - low_value;
+    if (k * k > low_value)
+      first = k * k - low_value;
     else {
-      if (!(low_value % prime))
+      if (!(low_value % k))
         first = 0;
       else
-        first = prime - (low_value % prime);
+        first = k - (low_value % k);
     }
 
-    for (i = first; i < size; i += prime)
+    for (i = first; i < size; i += k)
       marked[i] = 1;
 
-    // proc 0 gets the next prime for all
+    // proc 0 gets the next k for all
     if (!id) {
       while (marked[++index])
         ;
-      prime = index + 2;
+      k = index + 2;
     }
-    MPI_Bcast(&prime, 1, MPI_INT, 0, MPI_COMM_WORLD);
-  } while (prime * prime <= n);
+    MPI_Bcast(&k, 1, MPI_INT, 0, MPI_COMM_WORLD);
+  } while (k * k <= n);
 
   // counting results
   count = 0;

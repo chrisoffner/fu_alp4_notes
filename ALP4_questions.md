@@ -805,21 +805,21 @@ Ja, denn `pressed` ist lediglich eine Variable.
 **Modelle (4 Punkte)**
 **Wie stellen Sie bei der sequentiellen Programmierung sicher, dass Ihr Programmiermodell dem Ausführungsmodell entspricht? Warum ist diese Beziehung von Programmier- und Ausführungsmodell wichtig?**
 
-Die sequentielle Ausführung der Instruktionen wird durch das automatische Inkrementieren des Instruction Pointer sichergestellt. Für die Programmierung korrekter Programme ist es nötig, dass das Programmiermodell dem Ausführungsmodell entspricht, damit ProgrammiererInnen sinnvolle Schlussfolgerungen darüber treffen können, wie ihr Code den Systemzustand verändert.
+Die sequentielle Ausführung der Instruktionen wird durch das automatische Inkrementieren des Instruction Pointer sichergestellt. Für die Programmierung korrekter Programme ist es nötig, dass das Programmiermodell dem Ausführungsmodell (basiert auf dem Maschinenmodell) entspricht, damit ProgrammiererInnen sinnvolle Schlussfolgerungen darüber treffen können, wie ihr Code den Systemzustand verändert.
 
 ----
 
 **Programmiermodell (6 Punkte)**
 **Wie stellen Sie darüber hinaus bei der nebenläufigen und parallelen Programmierung sicher, dass Ihr Programmiermodell dem Ausführungsmodell entspricht?**
 
-...
+Da bei nebenläufiger/paralleler Programmierung ein deterministischer Programmablauf nicht gewährleistet ist, muss zumindest ein determinierter Programmablauf durch den/die ProgrammiererIn garantiert werden, indem kritische Abschnitte, die atomar ausgeführt werden müssen, durch Mutual Exclusion gesichert werden und dabei die vier weiteren Voraussetzungen für gute Locks erfüllt werden: Fairness, Low Overhead, Portability, Deadlock-free.
 
 ---
 
 ### Gegenseitiger Ausschluss (16 Punkte)
 
 **Implementierung eines Lösungsversuchs (10 Punkte)**
-**Selbst auf Basis eines Maschinenmodells mit sequentieller Abarbeitung der Maschineninstruktionen und dem Einsatz nur einer CPU ist das nachfolgende Beispiel des Versuchs eines Schutzes des kritischen Abschnitts nicht geeignet alle Anforderungen zu erfüllen. Welche Anforderungen an Mechanismen zum Schutz des kritischen Abschnitts werden nicht erfüllt und warum ist dies nicht der Fall? Welche Anforderungen werden erfüllt? Begründen Sie Ihre Antworten.**
+**Selbst auf Basis eines Maschinenmodells mit sequentieller Abarbeitung der Maschineninstruktionen und dem Einsatz nur einer CPU ist das nachfolgende Beispiel des Versuchs eines Schutzes des kritischen Abschnitts nicht geeignet, alle Anforderungen zu erfüllen. Welche Anforderungen an Mechanismen zum Schutz des kritischen Abschnitts werden nicht erfüllt und warum ist dies nicht der Fall? Welche Anforderungen werden erfüllt? Begründen Sie Ihre Antworten.**
 
 ```c
 #include ...
@@ -844,14 +844,18 @@ int unlock (long tid) {
 }
 ```
 
-...
+- Mutual Exclusion: Ja, da jeweils höchsten ein Thread den kritischen Abschnitt betreten kann.
+- Portability: Ja, weil C als Hochsprache gilt.
+- Deadlock-free: NEIN! Beide Threads können in der `while`-Loop stecken bleiben und nie wieder rauskommen.
+- Low Overhead: NEIN, weil wir durch *busy waiting* CPU-Cycles "verschwenden".
+- Fairness: Ja, denn kein Thread wird dauerhaft benachteiligt.
 
 ----
 
 **Erweiterung einer Lösung (6 Punkte)**
 **Beschreiben Sie eine Lösung, die sowohl alle Anforderungen erfüllt, als auch mit dem um mehrere CPUs inklusive Pipelining und lokale Caches erweiterten Maschinenmodell korrekt den Schutz des kritischen Abschnitts ermöglicht. Begründen Sie Ihre Antwort.**
 
-...
+Auf modernen Maschinen mit Pipelinen, lokalen Caches, etc., benötigen wir einen Lock-Mechanismus mit Hardware- und OS-Unterstützung, um alle fünf Anforderungen erfüllen zu können. Hierfür können wir POSIX Threads mit Mutex benutzen. Busy waiting wird hierbei durch das Blockieren von wartenden Threads ersetzt. Per `pthread_mutex_lock()` und `pthread_mutex_unlock()` können wir den kritischen Abschnitt sichern. Für Deadlock-Freiheit muss auch hier der/die ProgrammiererIn sorgen.
 
 ----
 
@@ -861,7 +865,7 @@ int unlock (long tid) {
 
 <img src="ALP4_questions.assets/petri.png" alt="petri" style="zoom:33%;" />
 
-...
+Ein Programm mit zwei Prozesse/Threads und einem kritischen Abschnitt, der durch ein Lock gesichert wird.
 
 ----
 
@@ -890,7 +894,7 @@ unlock (NUM_THREADS - 1 - tid);
 ```c
 #include ...
 #define NUM_THREADS 2
-
+// char _lock[2];
 int account[2];
 
 void *bank_action (void *threadid) {
@@ -902,14 +906,14 @@ void *bank_action (void *threadid) {
     
 	for (i = 0; i < 300000; i++) {
         
-    	amount = get_amount ();
+    	amount = get_amount();
         
-        
+        // lock (tid);
 		account[tid] -= amount;
         
         
 		account[NUM_THREADS - 1 - tid] += amount;
-
+        // unlock (tid);
         
     }
     
@@ -936,7 +940,315 @@ int main (int argc, char *argv[]) {
 }
 ```
 
+----
 
+### Verklemmungen (7 Punkte)
+
+**Bedingungen (4 Punkte)**
+**Nennen Sie alle vier Bedingungen für eine Verklemmung!**
+
+1. **Mutual Exclusion**: Ressourcen werden exklusiv genutzt.
+2. **Hold and Wait**: Threads beanspruchen Zugriff auf Betriebsmittel und fordern zusätzlich Zugriff auf weitere an.
+3. **No Preemption**: Betriebsmittel werden ausschließlich durch die Threads freigegeben, die sie nutzen. 
+4. **Circular Wait**: Der Wait-For-Graph enthält einen Kreis.
+
+----
+
+**Art der Ressource (3 Punkte)**
+**Wenn wir eine Hauptspeicherstelle als Ressource betrachten, kann es beim Zugriff auf diese Speicherstelle zu einer Verklemmung kommen? Begründen Sie Ihre Antwort.**
+
+Nicht, wenn wir tatsächlich von nur **einer** Hauptspeicherstelle sprechen. Denn für eine Verklemmung müssen mindestens zwei Ressourcen von jeweils einem Thread gehalten werden, während jeder Thread auf die Freigabe der Ressource des anderen Threads wartet. Bei nur einer Ressource kann es zu keinem Kreis im Wait-For-Graph kommen.
+
+----
+
+### MPI (11 Punkte)
+
+**Implementierung mittels MPI (7 Punkte)**
+**Eine Funktion zum Austausch von gegebenen Daten in einer Ringtopologie soll wie dargestellt mittels MPI implementiert werden. Nutzen Sie geeignete Befehle aus der gegebenen Auswahl. Achten Sie darauf, dass die Funktion im Laufe der Programmausführung mehrmals aufgerufen werden kann.**
+
+**Hinweise: Sie können die entsprechende Nummer einsetzen. Es dürfen Befehle mehrfach verwendet werden. Nicht alle Befehle müssen eingesetzt werden.**
+
+<img src="ALP4_questions.assets/MPI_Ring.png" alt="MPI_Ring" style="zoom: 33%;" />
+
+Befehle zur Implementierung der Lösung:
+
+```c
+MPI_Request send_request, recv_request;
+MPI_Init(&argc, &argv);
+MPI_Finalize();
+MPI_Comm_size(MPI_COMM_WORLD, &p);
+MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+MPI_Send(y + send_offset, blocksize, MPI_FLOAT, succ, 0, MPI_COMM_WORLD);
+MPI_Isend(y + send_offset, blocksize, MPI_FLOAT, succ, 0, MPI_COMM_WORLD, &send_request);
+MPI_Ssend(y + send_offset, blocksize, MPI_FLOAT, succ, 0, MPI_COMM_WORLD);
+MPI_Issend(y + send_offset, blocksize, MPI_FLOAT, succ, 0, MPI_COMM_WORLD, &send_request);
+MPI_Ibsend(y + send_offset, blocksize, MPI_FLOAT, succ, 0, MPI_COMM_WORLD, &send_request);
+MPI_Recv(y + recv_offset, blocksize, MPI_FLOAT, pred, 0, MPI_COMM_WORLD, &status);
+MPI_Irecv(y + recv_offset, blocksize, MPI_FLOAT, pred, 0, MPI_COMM_WORLD, &recv_request);
+MPI_Wait(&send_request, &status);
+MPI_Wait(&recv_request, &status);
+```
+
+````c
+#include <mpi.h>
+
+void Gather_ring (float x[], int blocksize, float y[]) {
+    int i, p, my_rank, succ, pred;
+  	int send_offset, recv_offset;
+  	MPI_status status;
+
+❗️  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+    for (i = 0; i < blocksize; i++)
+        y[i + my_rank * blocksize] = x[i];
+❗️  MPI_Comm_size(MPI_COMM_WORLD, &p);
+    succ = (my_rank + 1) % p;
+	pred = (my_rank - 1 + p) % p;
+
+    for (i = 0; i < p-1; i++) {
+
+
+  		send_offset = ((my_rank - i + p) % p) * blocksize;
+  		recv_offset = ((my_rank - i - 1 + p) % p) * blocksize;
+❗️      MPI_Send(y + send_offset, blocksize, MPI_FLOAT, succ, 0, MPI_COMM_WORLD);
+❗️      MPI_Recv(y + recv_offset, blocksize, MPI_FLOAT, pred, 0, MPI_COMM_WORLD, &status);
+    }
+}
+````
+----
+**Implementierung mittels MPI (4 Punkte)**
+**Begründen Sie Ihre Auswahl der Befehle die Sie in a.) getroffen haben anhand der Eigenschaften der entsprechenden MPI-Funktionen.**
+
+Um Deadlocks zu vermeiden, muss `MPI_Send()` die Nachrichten asynchron verschicken, da im Fall synchronen Sendens jede Node warten müsste, bis ihr Empfänger `MPI_Recv()` aufruft, wozu es aber dann niemals kommt.
+
+Der `for`-Loop ruft die Sende- bzw. Empfang-Funktion jeweils nur dreimal auf, daher benutzen wir das synchrone `MPI_Recv()` statt `MPI_Irecv()`, um zuverlässigen und vollständigen Datenempfang sicherzustellen.
+
+----
+
+### Parallele Programmierung (8 Punkte)
+
+**Nennen und erläutern Sie kurz im Sinne der Vorlesung die Schritte des Fosterschen Vorgehensmodells zur Entwicklung paralleler Programme am Beispiel der Implementierung eines der in der Vorlesung diskutierten parallelen Programme zur Sortierung.**
+
+...
+
+----
+
+### Kommunikation mit Sockets (6 Punkte)
+
+**Ein Echo-Server ist ein Server, der alle eingehenden Daten an einen Client zurückschickt. Sie sollen einen solchen Server mit `java.net.Socket` und TCP implementieren. Schreiben Sie den erforderlichen Java-Code als Pseudocode für a) Server und b) Client.**
+
+**Beachten Sie, dass ein Client die Verbindung mit „bye\n“ beenden kann. Außerdem kann ein Server der Einfachheit halber *nicht* mehrere Verbindungen gleichzeitig aufbauen.**
+
+**Ihr Pseudocode kann, muss sich aber nicht an Java orientieren. Die Semantik des Programmablaufs dagegen *muss* erhalten bleiben.**
+
+a) Server
+
+```java
+import java...
+
+public class Server {
+	public static void main(String args[]) throws IOException {
+		int PORT = 12345;
+		ServerSocket listen = new ServerSocket(PORT);
+
+		while (true) {
+			Socket socket = listen.accept();
+			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintStream out = new PrintStream(socket.getOutputStream());
+
+			while (true) {
+				String message = in.readLine();
+				if (message == null) { break; }
+				out.println(message);
+			}
+            
+			in.close();
+			out.close();
+			socket.close();
+		}
+	}
+}
+```
+
+b) Client
+
+```java
+import java...
+
+public class Client {
+	public static void main(String args[]) throws IOException {
+		int PORT = 12345;
+		String HOST = "localhost";
+		Socket socket = new Socket(HOST, PORT);
+
+		PrintStream out = new PrintStream(socket.getOutputStream());
+		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
+
+		while (true) {
+			String message = keyboard.readLine();
+			if (message == "bye") { break; }
+			out.println(message);
+			String answer = in.readLine();
+			System.out.println("Echo: " + answer);
+		}
+        
+		in.close();
+		out.close();
+		socket.close();
+	}
+}
+```
+
+----
+
+### JavaRMI (8 Punkte)
+
+**Eine mit RMI fernaufrufbare Java-Methode `quadrature` mit Parametern `f`, `a`, `b` auf dem Server X berechne das bestimmte Integral von `f(x)` über dem Intervall `[a, b]` mit einem geeigneten numerischen Verfahren. Die `f`-Werte sollen lokal – also auf X – berechnet werden, auch wenn `quadrature` von einem anderen Rechner Y aus fernaufgerufen wird.**
+
+**a) Schnittstellen (2 Punkte)**
+**Geben Sie die benötigten Schnittstellen an!**
+
+```java
+public interface NumericalIntegrationIntf extends Remote {
+    public double quadrature(double f, double a, double b) throws RemoteException;
+}
+
+// Benutzt, um f als Argument übergeben zu können
+public interface Function {
+    public double f(double x);
+}
+```
+
+**b) Fernaufruf Implementierung (1 Punkt)**
+**Wie sieht für $f(x) = x^2$ und das Intervall $[1,2]$ der (Fern-)Aufruf und der für $f$ benötigte Code aus?**
+
+```java
+// Code für f
+public class F implements Function, Serializable {
+    double f(double x) {
+		return x * x;
+	}
+}
+
+// Code für Client Y mit Fernaufruf
+public class Client {
+    public static void main(String[] args) {
+        int a = 1;
+        int b = 2;
+        F f = new F();
+
+        NumericalIntegrationImpl integrator = (NumericalIntegrationImpl) Naming
+                .lookup("rmi://localhost:1099/NumIntegrator");
+        System.out.println(integrator.quadrature(f, a, b));
+    }
+}
+```
+
+**c) Klasse (3 Punkte)**
+**Erläutern Sie (ohne Code), was alles zu passieren hat, bis der Klient über das in b) verwendete Vertreter-Objekt verfügen kann!**
+
+1. Server erstellt Registry per `LocateRegistry.createRegistry(1099)`
+2. Server erstellt Objekt.
+3. Server registriert Objekt in Registry via `rebind()`.
+4. Client findet per `Naming.lookup("//localhost/Server")` das Objekt und instanziiert es (lokal als Stub).
+5. Client kann über Objekt verfügen.
+
+**d) Fernaufruf (2 Punkte)**
+**Erläutern Sie (ohne Code), auf welche Weise der Code, der die Funktion $f$ implementiert, von Y nach X gelangt!**
+
+Die Funktion `double f(double x)` ist in der Klasse `F` implementiert, welche das `Serializable`-Interface implementiert. Dieses wird vom Stub auf Client-Seite serialisiert/gemarshalled, dann per Communication Module an den Server $X$ geschickt und dort via den Dispatcher vom Skeleton unmarshalled und beim Aufruf von `quadrature` als Argument übergeben.
+
+----
+
+### Web-Programmierung (8 Punkte)
+
+**Analysieren Sie die folgende Webseite und beantworten Sie diese Fragen:**
+
+```html
+<HTML>
+    <BODY>
+    <SCRIPT language="JavaScript">
+    function onSubmit() {
+        if(document.pressed == "signup" && accepted())
+            document.myForm.action = "welcome.html";
+        else if(document.pressed == "cancel")
+            document.myForm.action = "home.html";
+		return true; }
+    function accepted() {
+		return document.getElementById("accept-terms")}
+    </SCRIPT>
+	<FORM name="myForm" onSubmit="return onSubmit();">
+        <INPUT type="checkbox" id="accept-terms">
+        <LABEL>Accept terms and conditions. </LABEL>
+        <INPUT type="submit" name="Operation" value="signup" 
+               onClick="document.pressed=this.value" >
+		<INPUT type="submit" name="Operation" value="cancel"
+               onClick="document.pressed=this.value" >
+	</BODY>
+</HTML>
+```
+
+**a) Erscheinungsbild (1 Punkt)**
+**Wie ist das Erscheinungsbild der Webseite? Zeichnen Sie eine Skizze oder beschreiben Sie.**
+
+☑️ Accept terms and conditions. `signup` `cancel`
+
+**b) Actions (3 Punkte)**
+**Welche actions kann der Benutzer auslösen, und was passiert dann?**
+
+- Klick auf Checkbox ändert ihren Zustand zu *angekreuzt*.
+- Klick auf `signup`: falls Checkbox angekreuzt ist, wird auf `welcome.html` weitergeleitet, ansonsten passiert nichts.
+- Beim Klick auf `cancel` wird auf `home.html` weitergeleitet.
+
+**c) Objektzuordnung (1 Punkt)**
+**Auf welches DOM-Objekt bezieht sich in `<input …>` das jeweilige `this`?**
+
+Auf das jeweilige `<input>`-Objekt, also die Buttons.
+
+**d) Eigenschaften des Objekts (1 Punkt)**
+**Welche Eigenschaften hat dieses Objekt (jeweils Name und Wert)?**
+
+- name="Operation" value="signup"
+- name="Operation" value="cancel"
+
+**e) Ersetzung (1 Punkt)**
+**Kann man „pressed“ überall durch „trigger“ ersetzen? Begründung!**
+
+Ja, denn "pressed" ist nur eine Variable auf dem `document`.
+
+**f) Zweck (1 Punkt)**
+**Welchen Zweck erfüllt diese Website? Wäre sie in dieser Form brauchbar? Wenn nicht, was wäre nötig, um sie brauchbar zu machen?**
+
+- Wollt Ihr mich verarschen?
+
+----
+
+### Verteilungsabstraktion (6 Punkte)
+
+**Wir betrachten eine Methode $f$ in einer Java-ähnlichen Sprache, die neben Wertparametern (call-by-value) auch Variablenparameter (call-by-reference) kennt:**
+
+```Java
+class C {
+      void f(A a, ref int i) { i++; i += a.get(); } }
+
+class A {
+      int value = 0;
+      int get() { return value; }
+    
+    
+A test(C c) { c.f(this, value); return this; } }
+```
+
+**`a` ist ein Wertparameter, `i` ist ein Variablenparameter. Man überzeugt sich leicht davon, dass für beliebige `c` folgendes gilt:**
+
+```java
+new A().test(c).value == 2
+```
+
+**Wir setzen nun voraus, dass unsere Sprache Fernaufrufe unterstützt und zwar – anders als bei RMI – ohne dass am obigen Code etwas geändert werden müsste. Wenn `c` ein entferntes Objekt ist, ist `c.f` ein Fernaufruf und das anschließende `a.get` ebenfalls. In diesem Fall hat der obige Ausdruck einen anderen Wert als 2 – welchen und warum?**
+**(Zur Erinnerung: Ein Variablenparameter fungiert bei einem Fernaufruf als Wert- Ergebnis-Parameter (call-by-value-result)!)**
+
+...
 
 ----
 
