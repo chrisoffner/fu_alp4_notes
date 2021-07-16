@@ -798,4 +798,146 @@ Ja, denn `pressed` ist lediglich eine Variable.
 
 ----
 
+## Zweitklausur 2020
+
+### Grundlagen (10 Punkte)
+
+**Modelle (4 Punkte)**
+**Wie stellen Sie bei der sequentiellen Programmierung sicher, dass Ihr Programmiermodell dem Ausführungsmodell entspricht? Warum ist diese Beziehung von Programmier- und Ausführungsmodell wichtig?**
+
+Die sequentielle Ausführung der Instruktionen wird durch das automatische Inkrementieren des Instruction Pointer sichergestellt. Für die Programmierung korrekter Programme ist es nötig, dass das Programmiermodell dem Ausführungsmodell entspricht, damit ProgrammiererInnen sinnvolle Schlussfolgerungen darüber treffen können, wie ihr Code den Systemzustand verändert.
+
+----
+
+**Programmiermodell (6 Punkte)**
+**Wie stellen Sie darüber hinaus bei der nebenläufigen und parallelen Programmierung sicher, dass Ihr Programmiermodell dem Ausführungsmodell entspricht?**
+
+...
+
+---
+
+### Gegenseitiger Ausschluss (16 Punkte)
+
+**Implementierung eines Lösungsversuchs (10 Punkte)**
+**Selbst auf Basis eines Maschinenmodells mit sequentieller Abarbeitung der Maschineninstruktionen und dem Einsatz nur einer CPU ist das nachfolgende Beispiel des Versuchs eines Schutzes des kritischen Abschnitts nicht geeignet alle Anforderungen zu erfüllen. Welche Anforderungen an Mechanismen zum Schutz des kritischen Abschnitts werden nicht erfüllt und warum ist dies nicht der Fall? Welche Anforderungen werden erfüllt? Begründen Sie Ihre Antworten.**
+
+```c
+#include ...
+#define NUM_THREADS   2
+char _lock[2];
+
+
+int lock (long tid) {
+    _lock[tid] = 1;
+    
+    while (_lock[NUM_THREADS - 1 - tid]) {
+        ;
+	}
+    
+	return 0;
+}
+
+int unlock (long tid) {
+    
+    _lock[tid] = 0;
+	return 0;
+}
+```
+
+...
+
+----
+
+**Erweiterung einer Lösung (6 Punkte)**
+**Beschreiben Sie eine Lösung, die sowohl alle Anforderungen erfüllt, als auch mit dem um mehrere CPUs inklusive Pipelining und lokale Caches erweiterten Maschinenmodell korrekt den Schutz des kritischen Abschnitts ermöglicht. Begründen Sie Ihre Antwort.**
+
+...
+
+----
+
+### Modellierung (2 Punkte)
+
+**Was modelliert dieses Petri-Netz?**
+
+<img src="ALP4_questions.assets/petri.png" alt="petri" style="zoom:33%;" />
+
+...
+
+----
+
+### Kritische Abschnitte (6 Punkte)
+
+**Gegeben sei das folgende Programm zur Kontenverwaltung. Sichern Sie alle kritischen Abschnitte. Nutzen Sie die geeigneten Befehle aus der gegebenen Auswahl.**
+
+**Hinweise: Sie können die entsprechende Nummer einsetzen bzw. für die Zeile angeben. Es dürfen Befehle mehrfach verwendet werden. Nicht alle Befehle müssen eingesetzt werden.**
+
+Befehle zur Implementierung der Lösung:
+
+```c
+;
+char lock = 0;
+char _lock[2];
+while (lock)
+lock = 0;
+lock = 1;
+lock (tid);
+lock (NUM_THREADS - 1 - tid);
+unlock (tid);
+unlock (NUM_THREADS - 1 - tid);
+}
+```
+
+```c
+#include ...
+#define NUM_THREADS 2
+
+int account[2];
+
+void *bank_action (void *threadid) {
+    
+    long tid;
+	int amount, i;
+    
+	tid = (long) threadid;
+    
+	for (i = 0; i < 300000; i++) {
+        
+    	amount = get_amount ();
+        
+        
+		account[tid] -= amount;
+        
+        
+		account[NUM_THREADS - 1 - tid] += amount;
+
+        
+    }
+    
+    pthread_exit (NULL);
+}
+
+int main (int argc, char *argv[]) {
+    pthread_t threads[NUM_THREADS];
+    int rc, i;
+    long t;
+    
+    account[0] = account[1] = 100;
+    
+    for (t = 0; t < NUM_THREADS; t++) {
+        rc = pthread_create (&threads[t], NULL, bank_action, (void *)t);
+        if (rc) exit (-1);
+	}
+    
+    
+  	for (t = 0; t < NUM_THREADS; t++)
+        pthread_join (threads[t], NULL);
+    
+	pthread_exit (NULL);
+}
+```
+
+
+
+----
+
 [^1]: siehe Aufgabe 6.29 in Silberschatz, Abraham, Peter B. Galvin, and Greg Gagne. Operating System Concepts / Abraham Silberschatz ; Peter Baer Galvin ; Greg Gagne. 10. ed.
