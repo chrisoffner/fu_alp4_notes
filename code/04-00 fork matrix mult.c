@@ -12,15 +12,18 @@ int main(int argc, char *argv[]) {
   int status = 0;
   pid_t pid;
 
-  // init data
+  // Initialisation
   srand((unsigned)time(NULL));
 
+  // Initialise matrix A
   for (i = 0; i < 2; i++) {
     for (j = 0; j < 3; j++) {
       ma[i][j] = (int)(((double)rand() / (RAND_MAX - 1)) * 100);
       printf("%d,%d: %d \n", i, j, ma[i][j]);
     }
   }
+
+  // Initialise Matrix B
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 2; j++) {
       mb[i][j] = (int)(((double)rand() / (RAND_MAX - 1)) * 100);
@@ -30,12 +33,12 @@ int main(int argc, char *argv[]) {
 
   pid = fork();
   if (pid == 0) {
-    // child process is doing something...
+    // Child process
     for (i = 0; i < 2; i++) {
       result = 0;
       printf("0,%d : ", i);
       for (j = 0; j < 3; j++) {
-        result += (ma[0][j] * mb[j][i]);
+        result += ma[0][j] * mb[j][i];
       }
       printf(" %d \n", result);
     }
@@ -46,7 +49,7 @@ int main(int argc, char *argv[]) {
       result = 0;
       printf("1,%d : ", i);
       for (j = 0; j < 3; j++) {
-        result += (ma[1][j] * mb[j][i]);
+        result += ma[1][j] * mb[j][i];
       }
       printf(" %d \n", result);
     }

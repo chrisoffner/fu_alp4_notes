@@ -1,6 +1,6 @@
-# Questions
+## Tutoriumsaufgaben
 
-## Deadlocks
+### Deadlocks
 
 ----
 
@@ -96,7 +96,7 @@ In der Praxis sind in dynamischen Programmen die Gesamtanfragen bzw. zukünftige
 
 ----
 
-## Semaphoren und Monitore
+### Semaphoren und Monitore
 
 ----
 
@@ -156,7 +156,7 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 ----
 
-## Parallel Applications
+### Parallel Applications
 
 **Erkläre Foster’s Design Methodology. Welche vier Schritte werden dort genannt und was ist das Ziel jedes einzelnen Schritts?**
 
@@ -187,7 +187,7 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 ...
 
-## OpenMP
+### OpenMP
 
 **Mit welcher Option kann OpenMP in gcc aktiviert werden?**
 
@@ -223,7 +223,7 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 ...
 
-## MPI
+### MPI
 
 **Kompiliere die Datei `mpi_hello_world.c` auf `andorra.imp.fu-berlin.de` und führe das kompilierte Programm mittels `mpirun` aus. Verwende als Argumente `-machinefile Machinefile -np 12`. Die Dateien `mpi_hello_world.c` und `Machinefile` befinden sich im Anhang.**
 
@@ -253,7 +253,7 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 ...
 
-## Verteilte Systeme I
+### Verteilte Systeme I
 
 **Wie definiert man einen eigenen Thread in Java?**
 
@@ -283,7 +283,7 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 ...
 
-## Wiederholungsfragen
+## Wiederholungsquiz
 
 ----
 
@@ -557,7 +557,7 @@ int main () {
         for (row = 0; row < size; row++) {
             for (col = 0; col < size; col++)
                 MC[row][col] = 0.0;
-        } #pragma omp barrier
+        }
 		#pragma omp for schedule (static)
         for (row = 0; row < size; row++) {
             for (col = 0; col < size; col++)
@@ -578,27 +578,88 @@ int main () {
 
 **Nennen und erläutern Sie kurz im Sinne der Vorlesung die Schritte des Fosterschen Vorgehensmodells zur Entwicklung paralleler Programme am Beispiel der Implementierung eines parallelen Programms zur Matrizenmultiplikation.**
 
+#### Matrizenmultiplikation
+
 Seien $A, B$ die zu multiplizierenden Matrizen und $C$ die Ergebnismatrix.
 
-1. **Partitioning**
+- **Partitioning**
     - Aufteilung des Gesamtproblems in möglichst viele unabhängige Tasks.
     - Jede Zelle in $C$ ist das Skalarprodukt einer Zeile von $A$ und einer Spalte von $B$.
     - Ein Task kann z.B. ein solches Skalarprodukt sein.
-2. **Communication**
+
+- **Communication**
     - Bestimmung der nötigen Channels zur Kommunikation zwischen Tasks.
     - **Scatter:** Root-Prozess übergibt jeweils eine Zeile aus $A$ und eine Spalte aus $B$ an jeden Skalarprodukt-Task.
     - **Gather:** Am Ende übergeben alle Tasks ihr Ergebnis (Eintrag in $C$) wieder an den Root-Prozess.
-3. **Agglomeration**
+
+- **Agglomeration**
     - Gruppierung der Tasks, sodass #Gruppen mit #CPUs korrespondiert.
     - Tasks, die dieselben Daten benutzen, z.B. die gleiche Zeile aus $A$, sollten als Prozess gruppiert werden.
     - Alle Skalarproduktberechnungen sind unabhängig, es gibt keine Datenabhängigkeit.
     - Bei großen oder nicht-quadratischen Matrizen kann es effizienter sein, nich die gesamte Matrix $B$ zu versenden, sondern nur gewisse Spalten:
         <img src="ALP4_questions.assets/matrixSend.png" alt="matrixSend" style="zoom:33%;" />
-4. **Mapping**
+
+- **Mapping**
     - Zuweisung gruppierter Tasks an einzelne CPUs.
     - CPU-Auslastung soll maximiert werden, indem ähnlich viele Taskgruppen wie CPUs gibt.
     - In unserem Fall findet Kommunikation nur zwischen Root-Prozess und Skalarprodukt-Prozessen statt.
     - Kommunikationsaufwand soll minimiert werden, in dem Root-Prozess "zentriert" lokalisiert wird.
+
+#### QuickSort
+
+- **Partitioning**
+    - Rein funktions- bzw. daten-/domainbasierte Dekomposition ist nicht möglich, da Abhängigkeiten von den Pivot-Elementen bestehen, welche stets erst zur Laufzeit bestimmt werden.
+    - Daher wird eine Kombination aus funktions- und datenbasierter Komposition genutzt.
+    - Ein Task für die Sortierung jeder Teilliste.
+- **Communication**
+    - Verteilung der Teillisten an Tasks, von denen sie jeweils sortiert werden.
+    - Rückgabe der sortierten Teillisten an die nächsthöhere Ebene des Rekursionsbaums.
+- **Agglomeration**
+    - Gruppierte Tasks sollten auf der selben Teilliste arbeiten.
+    - Gleichverteilung des Rechenaufwands kann nicht sichergestellt werden, da die Pivot-Elemente erst zur Laufzeit bestimmt werden.
+- **Mapping**
+    - Prozesse werden erzeugt, um Teillisten zu bearbeiten, und müssen diese anschließend an ihren jeweiligen Elternprozess zurückgeben. Für effizientere Kommunikation sollten diese Prozesse nahe beieinander liegen.
+
+#### Hyperquicksort
+
+- **Partitioning & Agglomeration**
+    - Gleichverteilung der Liste in $p$ viele Intervalle.
+- **Communication**
+    - Wenig Kommunikation nötig, da hauptsächlich lokal sortiert wird.
+    - Teillisten müssen in $\log(p)$ Operationen ausgetauscht werden.
+- **Mapping**
+    - Teillisten werden nur innerhalb Teilmengen von Prozessen ausgetauscht, um Netzwerküberladung zu vermeiden.
+    - Am Ende ist all-to-all-Kommunikation nötig, daher sollte Knotenabstand gering sein.
+
+#### Sieb des Eratosthenes
+
+- **Partitioning**
+    - Aufteilung der Liste von Zahlen von 2 bis $n$ in Intervalle.
+    - Aufteilung der Arbeit für unterschiedliche $k$.
+    - Ein Task markiert in einem Intervall alle Vielfache für ein $k$. 
+- **Communication**
+    - Task auf dem gleichen Intervall müssen markierte Zahlen untereinander austauschen.
+    - Root-Prozess verteilt Intervalle und $k$-Werte an andere Tasks.
+    - Schließlich kommunizieren alle Tasks die markierten Zahlen in ihrem Intervall an Root.
+- **Agglomeration**
+    - Root-Prozess arbeitet auf dem ersten Intervall von 2 bis mindestens $\left\lfloor\sqrt{n}\right\rfloor$ und broadcastet alle Primzahlen $k$ in seinem Intervall an die anderen Prozesse.
+    - Tasks auf dem gleichen Intervall können zu einem Prozess zusammengefasst werden.
+    - Kommunikation zwischen Prozessen wird dadurch auf Scatter und Gather von Root reduziert.
+- **Mapping**
+    - Rechenaufwand ähnlich, da gleich große Intervalle.
+
+#### N-Body Problem
+
+- **Partitioning**
+    - Task: Berechnung der nächsten Position *eines* Massepunktes basierend auf der Position aller anderen.
+- **Communication**
+    - Jeder Massepunkt braucht stets die Masse und aktuelle Position jedes anderen Punkts.
+- **Agglomeration**
+    - Gleichverteilung der Massepunkte auf Prozesse (angenommen, es gibt mehr Punkte als CPUs).
+    - Dies reduziert Kommunikationsoverhead und gewährleistet ausgewogene Inter-Gruppen-Kommunikation.
+- **Mapping**
+    - Da alle Kommunikation per Broadcasts stattfindet, sollten alle Nodes topologisch nahe beieinander liegen.
+    - Wenn Zahl der Gruppen/Prozesse = Anzahl der CPUs, ist der Aufwand balanciert.
 
 ----
 
@@ -1024,14 +1085,6 @@ Der `for`-Loop ruft die Sende- bzw. Empfang-Funktion jeweils nur dreimal auf, da
 
 ----
 
-### Parallele Programmierung (8 Punkte)
-
-**Nennen und erläutern Sie kurz im Sinne der Vorlesung die Schritte des Fosterschen Vorgehensmodells zur Entwicklung paralleler Programme am Beispiel der Implementierung eines der in der Vorlesung diskutierten parallelen Programme zur Sortierung.**
-
-...
-
-----
-
 ### Kommunikation mit Sockets (6 Punkte)
 
 **Ein Echo-Server ist ein Server, der alle eingehenden Daten an einen Client zurückschickt. Sie sollen einen solchen Server mit `java.net.Socket` und TCP implementieren. Schreiben Sie den erforderlichen Java-Code als Pseudocode für a) Server und b) Client.**
@@ -1229,14 +1282,23 @@ Ja, denn "pressed" ist nur eine Variable auf dem `document`.
 
 ```Java
 class C {
-      void f(A a, ref int i) { i++; i += a.get(); } }
+    void f(A a, ref int i) {
+        i++;
+        i += a.get();
+    }
+}
 
 class A {
-      int value = 0;
-      int get() { return value; }
-    
-    
-A test(C c) { c.f(this, value); return this; } }
+    int value = 0;
+    int get() {
+        return value;
+    }
+
+	A test(C c) {
+        c.f(this, value);
+        return this;
+    }
+}
 ```
 
 **`a` ist ein Wertparameter, `i` ist ein Variablenparameter. Man überzeugt sich leicht davon, dass für beliebige `c` folgendes gilt:**
@@ -1246,9 +1308,9 @@ new A().test(c).value == 2
 ```
 
 **Wir setzen nun voraus, dass unsere Sprache Fernaufrufe unterstützt und zwar – anders als bei RMI – ohne dass am obigen Code etwas geändert werden müsste. Wenn `c` ein entferntes Objekt ist, ist `c.f` ein Fernaufruf und das anschließende `a.get` ebenfalls. In diesem Fall hat der obige Ausdruck einen anderen Wert als 2 – welchen und warum?**
-**(Zur Erinnerung: Ein Variablenparameter fungiert bei einem Fernaufruf als Wert- Ergebnis-Parameter (call-by-value-result)!)**
+**(Zur Erinnerung: Ein Variablenparameter fungiert bei einem Fernaufruf als Wert-Ergebnis-Parameter (call-by-value-result)!)**
 
-...
+Der Wert wäre `0`, denn das Objekt `a` wird nicht modifiziert.
 
 ----
 

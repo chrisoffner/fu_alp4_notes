@@ -6,8 +6,10 @@
 
 #define NUM_THREADS 2
 
+// shared data
 int account[2];
 
+// accounting
 void *bank_action(void *threadid) {
   long tid;
   int i;
@@ -19,8 +21,6 @@ void *bank_action(void *threadid) {
     amount = (int)(((double)rand() / (RAND_MAX - 1)) * 100);
     account[tid] -= amount;
     account[NUM_THREADS - 1 - tid] += amount;
-    //    printf ("tread %d, account_0: %d, account_1: %d \n", tid, account[0],
-    //    account[1]);
   }
 
   pthread_exit(NULL);
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // joining threads
+  // join threads
   for (t = 0; t < NUM_THREADS; t++) {
     pthread_join(threads[t], NULL);
   }

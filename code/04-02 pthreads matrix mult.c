@@ -19,7 +19,7 @@ void *matr_mult(void *threadid) {
   for (i = 0; i < 3; i++) {
     result[tid][i] = 0;
     for (j = 0; j < 3; j++) {
-      result[tid][i] += (ma[tid][j] * mb[j][i]);
+      result[tid][i] += ma[tid][j] * mb[j][i];
     }
   }
 
@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
       printf("%d,%d: %d \n", i, j, ma[i][j]);
     }
   }
+
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
       mb[i][j] = (int)(((double)rand() / (RAND_MAX - 1)) * 100);

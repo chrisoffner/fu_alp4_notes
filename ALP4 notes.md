@@ -524,9 +524,7 @@ Level 3:	2 threads in team.
 
 ...
 
-## Design and Implementation of Parallel Applications
-
-...
+## Design of Parallel Applications
 
 ### Foster's Design Methodology
 

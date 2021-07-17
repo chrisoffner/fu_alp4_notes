@@ -1,4 +1,8 @@
-// simple accounting with pthreads
+// Twofold Lock with Primary Protection
+// - Mutual exclusion ✅
+// - Deadlock-free ❌
+// - fair ✅
+// - No overhead (if no Deadlock occurs) ✅
 
 #include <pthread.h>
 #include <stdio.h>
@@ -10,9 +14,9 @@ int account[2];
 char _lock[2];
 
 int lock(long tid) {
+  _lock[tid] = 1;
   while (_lock[NUM_THREADS - 1 - tid])
     ;
-  _lock[tid] = 1;
   return 0;
 }
 

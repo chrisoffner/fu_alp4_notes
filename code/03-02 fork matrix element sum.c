@@ -6,32 +6,32 @@
 
 int main(void) {
   int data[2][3];
-  int i, j;
   int status = 0;
   int result = 0;
   pid_t pid;
 
-  // init data
-  for (i = 0; i < 2; i++) {
-    for (j = 0; j < 3; j++) {
+  // Matrix initialisation
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 3; j++) {
       data[i][j] = (i + 1) * j;
     }
   }
 
   pid = fork();
   if (pid == 0) {
-    // child process is doing
-    // something...
-    for (j = 0; j < 3; j++) {
+    // Child process
+    for (int j = 0; j < 3; j++) {
       result += data[0][j];
     }
     exit(result);
   } else if (pid > 0) {
-    // parent process is doing...
-    for (j = 0; j < 3; j++) {
+    // Parent process
+    for (int j = 0; j < 3; j++) {
       result += data[1][j];
     }
     pid = wait(&status);
+
+    // Parent prints its result and that of the child
     printf("\n Results: %d, %d\n", result, WEXITSTATUS(status));
     exit(EXIT_SUCCESS);
   } else {

@@ -1,4 +1,8 @@
-// simple accounting with pthreads
+// Twofold Lock with Mutual Precedence
+// - Mutual exclusion ✅
+// - Deadlock-free ✅
+// - fair ✅
+// - OVERHEAD because of sleep(1) and multiple while-loop cycles! ❌
 
 #include <pthread.h>
 #include <stdio.h>
