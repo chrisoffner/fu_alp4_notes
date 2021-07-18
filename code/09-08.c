@@ -11,7 +11,7 @@ int main() {
   {
     iam = omp_get_thread_num();
     sync[iam] = 0;
-#pragma imp barrier
+#pragma omp barrier
     work[iam] = do_work();
 #pragma omp flush(work)
     sync[iam] = 1;

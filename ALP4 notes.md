@@ -174,24 +174,14 @@ int unlock(long tid) {
 }
 ```
 
-
-
-## Parallelization
-
-...
-
 ## Petri Nets
 
-...
-
-### Properties
-
 - **Reachability**
-    A part of the Petri net is reachable if there is a sequence of transitions able to fire at some point in time and leading to mark the places or one of the places of this part with tokens. This is interesting in order to decide if some part of the program code is executed or a sub-system is during operation of the whole system.
+    A part of the Petri net is reachable if any of its places can be reached by tokens making valid transitions.
 - **Liveness**
-    Different types of liveness can be investigated, describing if the net or parts of the Petri net are able to show some actions by firing of transitions unless the final state is reached.
+    Describes whether the net (or parts of the net) can still fire or has reached a static state.
     - Weak liveness is given if there is a transition that can fire and the firing of that transition enables the firing of (at least) one other transition.
-    - Strong liveliness is given when the weak liveliness applies to all transitions.
+    - Strong liveness is given when the weak liveliness applies to all transitions.
 - **Termination**
     After a sequence of transitions the Petri net is no longer alive.
 - **Boundedness**
@@ -614,12 +604,11 @@ Level 3:	2 threads in team.
 
 ### Remote Invocation
 
-...
 
-#### Transparency
+
+#### Distribution Transparency
 
 - Access Transparency
-- Distribution Transparency
 - Location Transparency
 - Migration Transparency
 - Replication Transparency
@@ -715,7 +704,28 @@ An overlay network is a virtual network consisting of nodes and virtual links, w
 
 ## Cloud Computing
 
-...
+Cloud computing enables convenient, on-demand access to computing resources (networks, servers, storage, applications, services) with minimal management effort.
+
+### Characteristics
+
+- On-demand self-service
+- Broad network access
+- Resource pooling
+- (Rapid) elasticity
+- Measured (quality of) service
+
+### Service Models
+
+- **IaaS**: Infrastructure as a Service
+- **PaaS**: Platform as a Service
+- **Saas**: Software as a Service
+
+### Deployment Models
+
+- Community
+- Hybrid
+- Private
+- Public
 
 ### 21.2 Background Technologies
 

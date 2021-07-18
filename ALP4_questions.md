@@ -335,7 +335,7 @@ Bei RPC sprechen wir vom Fernaufruf einer Funktion.
     - *Kommentar: Es ist zwar eine dumme Lösung, aber wenn man sich geschickt anstellt, kann man damit den kritischen Abschnitt absichern. Absicherung = Keine zwei Threads sind gleichzeitig im kritischen Abschnitt.*
 - Ein Deadlock ist ein unsicherer Zustand. ✅
 - Mit dem Bankieralgorithmus sorgt man dafür, dass eine der vier Bedingungen für das Auftreten von Deadlocks nicht gilt. ❌
-    - *Kommentar: Wenn die Aussage stimmen würde, wäre der Bankieralgorithmus auch ein Verfahren der Kategorie Deadlock Prevention. Dies ist jedoch nicht der Fall. Es werden in Deadlock Avoidance keine Bedingungen für die Reihenfolge und Anzahl der Reservierungen von Ressourcen definiert (Beispiele: Preclaiming → Threads sind gezwungen, alle Ressourcen auf einmal zu reservieren, Allocation by Order → Threads sind gezwungen, die Ressourcen in einer fest definierten Reihenfolge zu reservieren). In Deadlock Avoidance wird stattdessen bei jeder Teilanforderung überprüft, ob ein sicherer Zustand bei der Erfüllung der Teilanforderung vorliegt (weil die Bedingungen für das Auftreten von Deadlocks in diesem Szenario gelten! Daher kann man nicht sorglos jede Teilanfor- derung genehmigen). Falls dies der Fall ist, wird die Teilanforderung erfüllt und anderenfalls wird diese nicht erfüllt. Solange sich das System immer in einem sicheren Zustand befindet, vermeidet (= avoided) man Deadlocks.*
+    - *Kommentar: Wenn die Aussage stimmen würde, wäre der Bankieralgorithmus auch ein Verfahren der Kategorie Deadlock Prevention. Dies ist jedoch nicht der Fall. Es werden in Deadlock Avoidance keine Bedingungen für die Reihenfolge und Anzahl der Reservierungen von Ressourcen definiert (Beispiele: Preclaiming → Threads sind gezwungen, alle Ressourcen auf einmal zu reservieren, Allocation by Order → Threads sind gezwungen, die Ressourcen in einer fest definierten Reihenfolge zu reservieren). In Deadlock Avoidance wird stattdessen bei jeder Teilanforderung überprüft, ob ein sicherer Zustand bei der Erfüllung der Teilanforderung vorliegt (weil die Bedingungen für das Auftreten von Deadlocks in diesem Szenario gelten! Daher kann man nicht sorglos jede Teilanforderung genehmigen). Falls dies der Fall ist, wird die Teilanforderung erfüllt und anderenfalls wird diese nicht erfüllt. Solange sich das System immer in einem sicheren Zustand befindet, vermeidet (= avoided) man Deadlocks.*
 - Beim Dining Philosophers Problem (KEINE SHARED Chopsticks!) lässt sich ein Deadlock vermeiden, indem jeder Philosoph zuerst sein rechtes Essstäbchen aufnimmt und dann sein linkes Essstäbchen bis auf einen Philosophen, der zuerst sein linkes Essstäbchen aufnimmt und anschließend sein rechtes Essstäbchen. Dieses Verfahren ist der Deadlock Prevention zuzuordnen, weil keine Zyklen im Wait-for-Graphen entstehen können. ✅
     - *Kommentar: https://cs241.cs.illinois.edu/coursebook/Deadlock#partial-ordering-dijkstras-solution*
 - Ein Deadlock liegt genau dann vor, wenn es einen Zyklus in einem Resource-Allocation-Graphen gibt. ❌
@@ -389,7 +389,7 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 - Eine Semaphore besteht aus einem Zähler und einer Datenstruktur für die wartenden Threads/Prozesse. ✅
 - Der Zähler einer Semaphore ist immer nichtnegativ. ❌
-    - *Kommentar: Ein negativer Zähler gibt die Anzahl der Threads an, die bei einem sem_wait(...) warten.*
+    - *Kommentar: Ein negativer Zähler gibt die Anzahl der Threads an, die bei einem `sem_wait(…)` warten.*
 - Eine Semaphore kann man als eine Erweiterung von einem Lock interpretieren. ✅
 - Die Funktion `sem_post()` kann nur von einem Thread aufgerufen werden, der sich gerade in einem kritischen Abschnitt befindet. ❌
     - *Kommentar: `sem_post(…)` kann von einer beliebigen Stelle im Code aus aufgerufen werden.*
@@ -414,9 +414,9 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 - Der primäre Zweck von `#pragma omp master` und `#pragma omp critical` ist es, kritische Abschnitte abzusichern. ❌
     - *Kommentar: Es geht hier um den **primären** Zweck. `#pragma omp master` ist hier nicht geeignet (nur ein einziger Thread führt den kritischen Abschnitt überhaupt aus).*
-- Functional Parallelism wird mit der Pragma-Direktive `#pragma omp parallel` implementiert. Weitere Pragma-Direktiven sind nicht notwendig. ❌
+    - Functional Parallelism wird mit der Pragma-Direktive `#pragma omp parallel` implementiert. Weitere Pragma-Direktiven sind nicht notwendig. ❌
 - Die Pragma-Direktiven `#pragma omp critical` und `#pragma omp atomic` sind äquivalent zueinander. ❌
-    - Kommentar: `#pragma omp atomic` ist nur sehr beschränkt anwendbar.
+    - *Kommentar: `#pragma omp atomic` ist nur sehr beschränkt anwendbar.*
 - Keine der Antworten trifft zu. ✅
 
 ----
@@ -438,7 +438,7 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 - ...modelliert die Kommunikation zwischen einzelnen Teilaufgaben, fasst Teilaufgaben mit viel Kommunikation untereinander zusammen und verteilt diese zusammengefassten Teilaufgaben passend auf verschiedene Knoten in einem Netzwerk. ✅
 - ...lässt sich sinnvoll auf ein Programm anwenden, welches unbedingt seriell ablaufen muss. ❌
 - ...benutzt als Basis das sogenannte Task/Channel-Model. Das Senden und Empfangen von Nachrichten erfolgt hier synchron (z.B. über `MPI_Send` und `MPI_Recv`). ❌
-    - Kommentar: Das Senden erfolgt asynchron (z.B. über `MPI_Isend`).
+    - *Kommentar: Das Senden erfolgt asynchron (z.B. über `MPI_Isend`).*
 
 ----
 
@@ -480,7 +480,7 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 ----
 
-**Die folgenden Schritte beschreiben den Ablauf eines RPCs. Bringe die Schritte in eine sinnvolle Reihenfolge. **
+**Die folgenden Schritte beschreiben den Ablauf eines RPCs. Bringe sie in eine sinnvolle Reihenfolge. **
 
 **✅ Sinnvolle Reihenfolge:**
 
@@ -584,7 +584,7 @@ int lock (long tid) {
 
     while (_lock[NUM_THREADS - 1 - tid]) {
         _lock[tid] = 0;
-        sleep (1);
+        sleep(1);
         _lock[tid] = 1;
     }
 
@@ -986,7 +986,9 @@ Ja, denn `pressed` ist lediglich eine Variable.
 
 ### Services (6 Punkte)
 
-**Im Teil der verteilten Entwicklung haben wir immer wieder den Begriff Dienst verwendet, um damit Frage/Antwort-Beziehungen zwischen Client und Servern in verschiedenen Kontexten: (1) TCP Sockets, (2) RMI und (3) Web-Dienste.**
+**Im Teil der verteilten Entwicklung haben wir immer wieder den Begriff Dienst verwendet, um damit Frage/Antwort-Beziehungen zwischen Client und Servern in verschiedenen Kontexten zu bezeichnen**:
+
+**(1) TCP Sockets, (2) RMI und (3) Web-Dienste.**
 
 **Nennen und erläutern Sie jeweils mindestens einen grundsätzlichen Unterschied (je 2 Punke) zwischen:**
 
@@ -998,7 +1000,7 @@ Ja, denn `pressed` ist lediglich eine Variable.
 
 - **TCP Sockets vs. RMI**
     - TCP-Sockets können auch für Low-Level-Aufgaben in procedural languages genutzt werden, während RMI auf Basis objektorientierter Programmierung funktioniert.
-    - Expliziter Nachrichtenaustausch per TCP vs. impliziter (verborgener)Nachrichtenaustausch bei RMI
+    - Expliziter Nachrichtenaustausch per TCP vs. impliziter (verborgener) Nachrichtenaustausch bei RMI
     - RMI ist programmiersprachenabhängig, TCP ist davon unabhängig
 - **RMI vs. Web-Services**
     - Web-Services sind plattform- und sprachenheterogen, RMI hingegen benötigt i.d.R. eine JVM.
@@ -1077,7 +1079,7 @@ int unlock (long tid) {
 **Erweiterung einer Lösung (6 Punkte)**
 **Beschreiben Sie eine Lösung, die sowohl alle Anforderungen erfüllt, als auch mit dem um mehrere CPUs inklusive Pipelining und lokale Caches erweiterten Maschinenmodell korrekt den Schutz des kritischen Abschnitts ermöglicht. Begründen Sie Ihre Antwort.**
 
-Auf modernen Maschinen mit Pipelinen, lokalen Caches, etc., benötigen wir einen Lock-Mechanismus mit Hardware- und OS-Unterstützung, um alle fünf Anforderungen erfüllen zu können. Hierfür können wir POSIX Threads mit Mutex benutzen. Busy waiting wird hierbei durch das Blockieren von wartenden Threads ersetzt. Per `pthread_mutex_lock()` und `pthread_mutex_unlock()` können wir den kritischen Abschnitt sichern. Für Deadlock-Freiheit muss auch hier der/die ProgrammiererIn sorgen.
+Auf modernen Maschinen mit Pipelining, lokalen Caches, etc., benötigen wir einen Lock-Mechanismus mit Hardware- und OS-Unterstützung, um alle fünf Anforderungen erfüllen zu können. Hierfür können wir POSIX Threads mit Mutex benutzen. Busy waiting wird hierbei durch das Blockieren von wartenden Threads ersetzt. Per `pthread_mutex_lock()` und `pthread_mutex_unlock()` können wir den kritischen Abschnitt sichern. Für Deadlock-Freiheit muss auch hier der/die ProgrammiererIn sorgen.
 
 ----
 
@@ -1179,7 +1181,7 @@ int main (int argc, char *argv[]) {
 **Art der Ressource (3 Punkte)**
 **Wenn wir eine Hauptspeicherstelle als Ressource betrachten, kann es beim Zugriff auf diese Speicherstelle zu einer Verklemmung kommen? Begründen Sie Ihre Antwort.**
 
-Nicht, wenn wir tatsächlich von nur **einer** Hauptspeicherstelle sprechen. Denn für eine Verklemmung müssen mindestens zwei Ressourcen von jeweils einem Thread gehalten werden, während jeder Thread auf die Freigabe der Ressource des anderen Threads wartet. Bei nur einer Ressource kann es zu keinem Kreis im Wait-For-Graph kommen.
+Nicht, wenn wir tatsächlich von nur **einer** Hauptspeicherstelle sprechen. Denn für eine Verklemmung müssen mindestens zwei Ressourcen von jeweils einem Thread gehalten werden, während jeder Thread auf die Freigabe der Ressource des anderen Threads wartet. Bei nur einer Ressource kann es zu keinem Kreis im Wait-For-Graph kommen. Beim Versuch, den Zugriff auf diese eine Speicherstelle über falsch programmiertes Lock zu erhalten, kann es natürlich dennoch zum Deadlock im Lock kommen.
 
 ----
 
