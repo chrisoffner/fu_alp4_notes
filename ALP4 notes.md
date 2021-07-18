@@ -1,5 +1,3 @@
-## Concurrent & Distributed Programming
-
 ## Concurrent Programming Paradigms
 
 - **Concurrent programming**
@@ -518,9 +516,22 @@ Level 3:	2 threads in team.
 
 ## MPI – Message Passing Interface
 
+- `mpicc –o test test.c` to compile with MPI.
+
+- `mpirun –machinefile Machinefile –np 4 test` to start program.
+    Machinefile contains the nodes on which the program should start its processes on, together with the respective number of MPI processes to be launched.
+    Example Machinefile:
+
+    ```
+    node00:2
+    node01:2
+    ```
+
+### Scatter
+
 ...
 
-## MPI Group Communication and MPI 2
+### Gather
 
 ...
 
@@ -582,6 +593,13 @@ Level 3:	2 threads in team.
 - Performance of a parallel program depends heavily on the balanced distribution of computation between all processes.
 - Synchronization (with broadcast communication) may lead to temporary network overload.
 
+### Speed-Up & Amdahl's Law
+
+- $T(1)$: execution time on one processor
+- $T(p)$: execution time on $p$ processors
+- $S(p) := \frac{T(1)}{T(p)}$: **speed-up** gained from parallel execution with $p$ processors
+- $E(p) := \frac{S(p)}{p}$: **efficiency** measures the fraction of time for which a processor is usefully utilized
+
 ## From Concurrent to Parallel Programming
 
 ...
@@ -606,7 +624,7 @@ Level 3:	2 threads in team.
 - Migration Transparency
 - Replication Transparency
 
-### RMI - Remote Method Invocation
+## RMI - Remote Method Invocation
 
 1. Caller calls a local procedure implemented by the stub
 2. Stub marshalls call type and the input arguments into a request message
@@ -622,7 +640,7 @@ Level 3:	2 threads in team.
 12. Stub unpacks output arguments from the message
 13. Stub passes output arguments to the caller, releases execution thread and caller then continues in execution
 
-#### Stub
+### Stub
 
 **Responsibilities of the stub**
 
@@ -634,7 +652,7 @@ Level 3:	2 threads in team.
 - unmarshalling of the response from the skeleton
 - informing the caller that the call is complete
 
-#### Skeleton
+### Skeleton
 
 **Responsibilities of the skeleton**
 
@@ -644,7 +662,7 @@ Level 3:	2 threads in team.
 - marshalling of the returned values from server objects
 - passing values back to the client stub over the network
 
-#### Java RMI
+### Java RMI
 
 Java RMI is a Java API that performs **remote method invocation**, the object-oriented equivalent of remote procedure calls (**RPC**), with support for direct transfer of serialized Java classes and distributed garbage-collection.
 
@@ -679,30 +697,6 @@ Java RMI is a Java API that performs **remote method invocation**, the object-or
 ...
 
 ### 21.3 Deployment and Service Models
-
-...
-
-## 22 Web Application Development
-
-...
-
-### 22.2 CSS and JS
-
-...
-
-### 22.3 JS Frameworks
-
-...
-
-### 24.1 URI & URL
-
-...
-
-### 24.2 HTTP
-
-...
-
-### REST & WebSockets
 
 ...
 

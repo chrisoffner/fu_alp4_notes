@@ -172,16 +172,18 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 **Angenommen man möchte grob überschlagen, ob es sich lohnt ein bestimmtes serielles Programm zu parallelisieren. Durch Benchmarks hat man ermittelt, dass 80% der Ausführungszeit in Funktionen verbracht wird, die sich gut parallelisieren lassen. Die restlichen 20% der Ausführungszeit wird in Codeabschnitten verbracht, die unbedingt seriell ausgeführt werden müssen (z.B. kritische Abschnitte).**
 
 **(i) Wie hoch ist der erwartete Speed-Up für 6 Prozessoren?**
-
-...
-
+$$
+S(6) = \frac{T(1)}{T(6)} = \frac{1}{0.2 + \frac{0.8}{6}} = 3
+$$
 **(ii) Wie hoch ist der erwartete Speed-Up für beliebig viele Prozessoren?**
-
-...
-
+$$
+S(p) = \frac{T(1)}{T(p)} = \frac{1}{0.2 + \frac{0.8}{p}}
+$$
 **Ist Amdahl’s Law eine realitätsnahe Abschätzung des zu erwartenden Speed-Up für die Parallelisierung eines Programms?**
 
-...
+Amdahl's Law ist eine nützliche Heuristik, die jedoch den konkreten Sachverhalt vereinfacht und manche Faktoren außer Acht lässt. Zum Beispiel wird der Overhead durch Prozess-/Threaderstellung sowie -Kommunikation ausgelassen.
+
+Ebenso werden Effizienzgewinne durch Local Caching beim Herunterbrechen des Gesamtproblems auf Teilprobleme mit kleineren Datenmengen (mit denen u.U. $S > p$ erreicht werden kann) durch Amdahl's Law nicht berücksichtigt.
 
 **Gegeben seien n ganze Zahlen $a_1, a_2, . . ., a_n$. Entwickle mithilfe von *Foster’s Design Methodology* einen parallelen Algorithmus, welcher $\mathrm{min}_{i=1,...,n}a_i$ berechnet.**
 
@@ -191,19 +193,20 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 **Mit welcher Option kann OpenMP in gcc aktiviert werden?**
 
-...
+`-fopenmp`
 
 **Was bedeutet Functional Parallelism?**
 
-...
+Function parallelism bezeichnet die Parallelisierung unterschiedlicher Aufgaben/Operationen auf denselben Daten. Im Gegensatz dazu wird bei Data Parallelism die gleiche Operation parallel auf unterschiedlichen Daten ausgeführt.
 
 **Was ist eine Barriere?**
 
-...
+Eine Barriere ist ein Synchronisierungsmechanismus, bei dem jeder Thread bei Erreichen der Barriere wartet, bis alle anderen Threads ebenfalls die Barriere erreicht haben.
 
 **Was ist der Unterschied zwischen `#pragma omp single` und `#pragma omp critical`?**
 
-...
+- `#pragma omp single` lässt den folgenden Block von nur einem Thread ausführen.
+- `#pragma omp critical` lässt den folgenden Block von nur einem Thread gleichzeitig ausführen.
 
 **In der Ankündigung befindet sich ein C-Programm `sum.c`, welches die Summe $\sum_{i=1}^{5.000.000}i$ berechnet. Parallelisiere das Programm mit OpenMP. Das Ergebnis sollte mit der seriellen Version immer noch übereinstimmen. Es steht auf Seite 2 ein Tipp, falls man einen braucht.**
 
@@ -227,8 +230,6 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 **Kompiliere die Datei `mpi_hello_world.c` auf `andorra.imp.fu-berlin.de` und führe das kompilierte Programm mittels `mpirun` aus. Verwende als Argumente `-machinefile Machinefile -np 12`. Die Dateien `mpi_hello_world.c` und `Machinefile` befinden sich im Anhang.**
 
-...
-
 **Vergleiche synchrone Kommunikation mit asynchroner Kommunikation und nenne passende Beispiele aus der Vorlesung über MPI.**
 
 ...
@@ -251,33 +252,39 @@ Ein Semaphor hingegen *kann* `sem_post()` von einem anderen Thread aufrufen, als
 
 **Ist es sinnvoll, OpenMP und MPI zu kombinieren?**
 
-...
+Es kann sinnvoll sein, sowohl innerhalb eines Prozesses als auch über mehrere CPUs zu parallelisieren.
+Dabei wird OpenMP für ersteres und MPI für letzteres genutzt. Wichtig ist, dass MPI-Calls nicht innerhalb eines mit OpenMP parallelisierten Programmabschnitts aufgerufen werden, da dies zu Fehlern führen kann.
 
 ### Verteilte Systeme I
 
 **Wie definiert man einen eigenen Thread in Java?**
 
-...
+`Thread thread = new Thread();`
 
 **Was ist (Un-)Marshalling?**
 
-...
+Beim Marshalling werden die Daten (z.B. Funktionsaufruf-Typ und -Argumente) als Nachricht als Bytestream verpackt. Beim Unmarshalling wird die Nachricht wieder "aufgeschlüsselt"... 
 
 **Was ist eine Middleware? Gib ein Beispiel für eine Middleware.**
 
-...
+Als Middleware bezeichnen wir Software, welche die Kommunikation zwischen Systemkomponenten so abstrahiert, dass es für den Programmierenden einfacher wird, Anwendungen zu entwickeln. Middleware vereinfacht die Kooperation von Softwarekomponenten.
+
+**Beispiel:** RMI
 
 **Vergleiche IPC und RPC.**
 
-...
+IPC kann sich auch auf die lokale Kommunikation von Daten (ohne einen Funktionsaufruf) beziehen.
+
+Bei RPC sprechen wir vom Fernaufruf einer Funktion.
 
 **Skizziere die Implementierung eines Remote Procedure Calls.**
 
-...
+<img src="ALP4_questions.assets/rpc.png" alt="rpc" style="zoom:33%;" />
 
 **Vergleiche At-least-once semantics und At-most-once semantics bei RPC Calls. In welchen Szenarien würde man welche RPC Call Semantics bevorzugen?**
 
-...
+- Wenn unsere Prozedur nicht idempotent ist, kann at-least-once semantics zu Fehlern führen.
+- Bei rechenintensiven Tasks wären *at-most-once* semantics zu bevorzugen, da dort Ergebnisse bei Retransmissions nicht neu berechnet, sondern aus einem Zwischenspeicher nur neu veschickt werden.
 
 **Betrachte das Beispiel RPCExample im Github-Repository https://github.com/FUB-HCC/WhiteBoard-Implementation-Examples und erkläre, wie das Beispiel funktioniert.**
 
@@ -516,7 +523,7 @@ Ja, der Zustand ist sicher! $DP = \emptyset$.
 
 **Verändern Sie anschließend $\vec{v}$ derart, dass aus einer sicheren eine unsichere bzw. aus einer unsicheren eine sichere Situation wird, während die Gesamtanzahl der verfügbaren Ressourcen $\vec{v}$ unverändert bleibt!**
 
-$\vec{v} = \begin{pmatrix}23&0&0&0\end{pmatrix}$
+$\vec{v} = \begin{pmatrix}8&6&4&5\end{pmatrix}$
 
 ----
 
@@ -1110,7 +1117,7 @@ public class Server {
 
 			while (true) {
 				String message = in.readLine();
-				if (message == null) { break; }
+				// if (message == null) { break; }
 				out.println(message);
 			}
             
@@ -1272,7 +1279,8 @@ Ja, denn "pressed" ist nur eine Variable auf dem `document`.
 **f) Zweck (1 Punkt)**
 **Welchen Zweck erfüllt diese Website? Wäre sie in dieser Form brauchbar? Wenn nicht, was wäre nötig, um sie brauchbar zu machen?**
 
-- Wollt Ihr mich verarschen?
+- `accepted()` sollte `document.getElementById("accept-terms").checked` returnen.
+- Ansonsten fehlt auch noch einiges.
 
 ----
 
@@ -1314,4 +1322,35 @@ Der Wert wäre `0`, denn das Objekt `a` wird nicht modifiziert.
 
 ----
 
+## Testklausur 2021
+
+### Grundlagen (3 Punkte)
+
+**Was unterscheidet parallele von verteilter Programmierung bezüglich der Programmabarbeitung? Bitte nennen Sie drei Unterschiede.**
+
+- Bei verteilter Programmierung kooperieren idR autonome, heterogene Geräte miteinander, bei paralleler Programmierung hingegen werden alle Nodes (die oftmals hinsichtlich ihrer Hardware homogen sind) vollständig vom Programmierer kontrolliert.
+- Bei paralleler Programmierung kann shared memory genutzt werden, bei verteilter Programmierung müssen Daten stets per Nachrichten ausgetauscht werden. (MPI verkompliziert diese Unterscheidung etwas, da es generell der parallelen Programmierung zugeordnet wird, aber über Nachrichtenaustausch kommuniziert wird.)
+- Ziel der parallelen Programmierung ist primär, möglichst viele Programmabschnitte parallel abzuarbeiten, um Performancegewinne zu erzielen. Bei verteilter Programmierung findet oftmals nur wenig Parallelismus statt, sondern die Hauptaufgabe besteht aus sequentiellem Datenaustausch mit Geräte/Servern an unterschiedlichen Orten.
+
+----
+
+### Modellierung (6 Punkte)
+
+ **a.) Eigenschaft eines Petri-Netzes (4 Punkte)**
+**Ist dieses Petri-Netz lebendig? Begründen Sie Ihre Antwort.**
+
+<img src="ALP4_questions.assets/petriTest.png" alt="petriTest" style="zoom:33%;" />
+
+Nein, denn nach zwei Schritten befindet sich nur noch ein *Token* im *Place* links oben und die *Transition* rechts oben kann nicht mehr feuern.
+
+----
+
+**b.) Änderung eines Petri-Netzes (2 Punkte)**
+**Sollte es nicht lebendig sein, wie könnte aus dem Petri-Netz ein lebendiges werden?**
+
+Wenn wir den *Place* rechts oben samt seiner Verbindung zur *Transition* links von sich löschen, erhalten wir ein lebendiges Petri-Netz. 
+
+----
+
 [^1]: siehe Aufgabe 6.29 in Silberschatz, Abraham, Peter B. Galvin, and Greg Gagne. Operating System Concepts / Abraham Silberschatz ; Peter Baer Galvin ; Greg Gagne. 10. ed.
+

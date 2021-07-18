@@ -1,5 +1,4 @@
-// simple MPI program to gather data with asynchr. comm.
-// Rauber, Ruenger: Parallele und vert. Prg.
+// MPI Gather Ring with asynchronous communication
 
 void Gather_ring(float x[], int blocksize, float y[]) {
   int i, p, my_rank, succ, pred;

@@ -1,5 +1,4 @@
-// simple program with openmp
-// Rauber, Ruenger: Parallele und vert. Prg.
+// OpenMP Matrix Multiplication
 
 #include <omp.h>
 #include <stdio.h>
@@ -9,12 +8,10 @@ int i, row, col, size = 100;
 
 void read_input() {
   for (i = 0; i < 100; i++)
-    for (int j = 0; j < 100; j++)
+    for (int j = 0; j < 100; j++) {
       MA[i][j] = (double)(i + j) + 1.0;
-
-  for (i = 0; i < 100; i++)
-    for (int j = 0; j < 100; j++)
       MB[i][j] = (double)(i + j) + 1.0;
+    }
 }
 
 void write_output() {

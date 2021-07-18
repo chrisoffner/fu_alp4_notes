@@ -22,7 +22,7 @@
 #pragma omp parallel for
 #pragma omp parallel for private(x) reduction(+ : area)
 
-// Define sections that get executed by different threads respectively  
+// Define sections that get executed by different threads respectively
 #pragma omp parallel sections
 #pragma omp section
 

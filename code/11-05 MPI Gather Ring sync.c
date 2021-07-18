@@ -1,5 +1,4 @@
-// simple MPI program to gather data
-// Rauber, Ruenger: Parallele und vert. Prg.
+// MPI Gather Ring with synchronous communication
 
 void Gather_ring(float x[], int blocksize, float y[]) {
   int i, p, my_rank, succ, pred;

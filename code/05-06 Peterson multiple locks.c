@@ -1,4 +1,8 @@
-// simple accounting with pthreads
+// Multiple locks with mutual access – Peterson
+// - Mutual exclusion ✅
+// - Deadlock-free ✅
+// - fair ✅
+// - low overhead ✅
 
 #include <pthread.h>
 #include <stdio.h>
@@ -9,18 +13,15 @@
 int account[NUM_THREADS];
 int level[NUM_THREADS];
 int last[NUM_THREADS];
-// int favoured;
 
 int lock(long tid) {
-  int i, j, loop;
-
-  for (i = 1; i < NUM_THREADS; i++) {
+  for (int i = 1; i < NUM_THREADS; i++) {
     level[tid] = i;
     last[i] = tid;
-    loop = 1;
+    int loop = 1;
     while ((loop) && (last[i] == tid)) {
-      j = 0;
       loop = 0;
+      int j = 0;
       while ((j < NUM_THREADS) && ((level[j] < i) || (j == tid)))
         j++;
       if (j < NUM_THREADS)

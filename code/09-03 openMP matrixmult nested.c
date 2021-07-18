@@ -1,4 +1,4 @@
-// Matrix Multiplication
+// OpenMP Matrix Multiplication
 
 #include <omp.h>
 #include <stdio.h>

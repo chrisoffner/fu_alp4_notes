@@ -1,4 +1,8 @@
-// LAMPORT'S BAKERY
+// Lamport's bakery
+// - Mutual exclusion ✅
+// - Deadlock-free ✅
+// - fair ✅
+// - low overhead ✅
 
 #include <pthread.h>
 #include <stdio.h>
