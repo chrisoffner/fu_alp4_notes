@@ -298,6 +298,7 @@ Bei RPC sprechen wir vom Fernaufruf einer Funktion.
 
 - ...deterministisch und determiniert sind. ✅
 - ...deterministisch und NICHT determiniert sind. ❌
+    - *Kommentar: Determinismus ⇒ Determiniert*
 - ...NICHT deterministisch und determiniert sind. ✅
 - ...weder deterministisch noch determiniert sind. ✅
 
@@ -307,17 +308,22 @@ Bei RPC sprechen wir vom Fernaufruf einer Funktion.
 
 - Im Gegensatz zu Prozessen haben Threads einen eigenen Adressraum. ❌
 - Neben dem Adressraum teilen sich mehrere Threads den Stack vom Prozess. ❌
+    - *Kommentar: Jeder Thread hat seinen eigenen Stack.*
 - Ein Kontextwechsel zwischen zwei Threads im selben Prozess ist in der Regel effizienter als ein Kontextwechsel zwischen zwei verschiedenen Prozessen. ✅
+    - *Kommentar: Kein Wechsel des Adressraums.*
 - Ein Prozess hat immer einen eigenen PCB. ✅
 - Bei der Verwendung von Prozessen können keine kritische Abschnitte entstehen. ❌
 - Prozesse werden auf POSIX Systemen mit dem Syscall `create_process()` erzeugt. ❌
+    - *Kommentar: Der Syscall heißt `fork()`.*
 
 ----
 
 **Welche der Aussagen über Lockmechanismen sind korrekt?**
 
 - POSIX-Mutexe funktionieren auf einem modernen Maschinenmodell (Pipelining, Out-of-Order Execution, Caching usw.) mit einer einzigen CPU. ✅
+    - *Kommentar: Wenn POSIX-Mutexe bei mehreren CPUs funktionieren, dann sicherlich auch bei einer einzigen CPU.*
 - In der Vorlesung wurden exakt vier Kriterien vorgestellt, die ein "guter" Lock erfüllen muss. ❌
+    - *Kommentar: Es sind **fünf** Kriterien.*
 - Die Korrektheit von einem Lockmechanismus hängt vom Maschinenmodell ab. ✅
 - Ob (Maschinen-)Instruktionen atomar ausgeführt werden, ist für die Korrektheit eines Locks vollkommen irrelevant. ❌
 
@@ -326,19 +332,25 @@ Bei RPC sprechen wir vom Fernaufruf einer Funktion.
 **Welche der Aussagen über Deadlocks sind korrekt?**
 
 - Ein kritischer Abschnitt lässt sich trivial absichern, indem man vor dem Eintritt in den kritischen Abschnitt einen Deadlock erzeugt. ✅
+    - *Kommentar: Es ist zwar eine dumme Lösung, aber wenn man sich geschickt anstellt, kann man damit den kritischen Abschnitt absichern. Absicherung = Keine zwei Threads sind gleichzeitig im kritischen Abschnitt.*
 - Ein Deadlock ist ein unsicherer Zustand. ✅
 - Mit dem Bankieralgorithmus sorgt man dafür, dass eine der vier Bedingungen für das Auftreten von Deadlocks nicht gilt. ❌
-- Beim Dining Philosophers Problem (KEINE SHARED Chopsticks!) lässt sich ein Deadlock vermeiden, indem jeder Philosoph zuerst sein rechtes Essstäbchen aufnimmt und dann sein linkes Essstäbchen bis auf einen Philosophen, der zuerst sein linkes Essstäbchen aufnimmt und anschließend sein rechtes Essstäbchen. Dieses Verfahren ist der Deadlock Prevention zuzuordnen, weil keine Zyklen im Wait-for-Graphen entstehen können. ⁉️
+    - *Kommentar: Wenn die Aussage stimmen würde, wäre der Bankieralgorithmus auch ein Verfahren der Kategorie Deadlock Prevention. Dies ist jedoch nicht der Fall. Es werden in Deadlock Avoidance keine Bedingungen für die Reihenfolge und Anzahl der Reservierungen von Ressourcen definiert (Beispiele: Preclaiming → Threads sind gezwungen, alle Ressourcen auf einmal zu reservieren, Allocation by Order → Threads sind gezwungen, die Ressourcen in einer fest definierten Reihenfolge zu reservieren). In Deadlock Avoidance wird stattdessen bei jeder Teilanforderung überprüft, ob ein sicherer Zustand bei der Erfüllung der Teilanforderung vorliegt (weil die Bedingungen für das Auftreten von Deadlocks in diesem Szenario gelten! Daher kann man nicht sorglos jede Teilanfor- derung genehmigen). Falls dies der Fall ist, wird die Teilanforderung erfüllt und anderenfalls wird diese nicht erfüllt. Solange sich das System immer in einem sicheren Zustand befindet, vermeidet (= avoided) man Deadlocks.*
+- Beim Dining Philosophers Problem (KEINE SHARED Chopsticks!) lässt sich ein Deadlock vermeiden, indem jeder Philosoph zuerst sein rechtes Essstäbchen aufnimmt und dann sein linkes Essstäbchen bis auf einen Philosophen, der zuerst sein linkes Essstäbchen aufnimmt und anschließend sein rechtes Essstäbchen. Dieses Verfahren ist der Deadlock Prevention zuzuordnen, weil keine Zyklen im Wait-for-Graphen entstehen können. ✅
+    - *Kommentar: https://cs241.cs.illinois.edu/coursebook/Deadlock#partial-ordering-dijkstras-solution*
 - Ein Deadlock liegt genau dann vor, wenn es einen Zyklus in einem Resource-Allocation-Graphen gibt. ❌
+    - *Kommentar: Resource-Allocation-Graph $\neq$ Wait-for-Graph.*
 
 ----
 
 **Welche der Aussagen über den Bankieralgorithmus sind korrekt?**
 
 - Der Bankieralgorithmus wird in *Deadlock Avoidance* und *Deadlock Resolution* angewandt. ❌
+    - *Kommentar: Deadlock Resolution $\neq$ Deadlock Detection.*
 - Die Laufzeit des Bankieralgorithmus ist $\mathcal{O}(nk^2)$, wobei $n$ = Anzahl Resourcen und $k$ = Anzahl Threads. ✅
 - Der Bankieralgorithmus entspricht einer iterativen Reduktion von einem Resource Allocation Graph. Bei einem sicheren Zustand kann man den ursprünglichen Resource Allocation Graph zu einem Graphen mit leerer Kantenmenge reduzieren. ✅
 - Ein unsicherer Zustand führt zwangsweise zu einem Deadlock. ❌
+    - *Kommentar: Threads können von sich aus Ressourcen freigeben und dadurch kann man wieder in einen sicheren Zustand gelangen (und von da aus einen Deadlock immer vermeiden).*
 
 ----
 
@@ -377,9 +389,151 @@ Die Reihenfolge $(T_3, T_1, T_2, T_5, T_4)$ ermöglicht einen Deadlock-freien Pr
 
 - Eine Semaphore besteht aus einem Zähler und einer Datenstruktur für die wartenden Threads/Prozesse. ✅
 - Der Zähler einer Semaphore ist immer nichtnegativ. ❌
+    - *Kommentar: Ein negativer Zähler gibt die Anzahl der Threads an, die bei einem sem_wait(...) warten.*
 - Eine Semaphore kann man als eine Erweiterung von einem Lock interpretieren. ✅
 - Die Funktion `sem_post()` kann nur von einem Thread aufgerufen werden, der sich gerade in einem kritischen Abschnitt befindet. ❌
+    - *Kommentar: `sem_post(…)` kann von einer beliebigen Stelle im Code aus aufgerufen werden.*
 - Ein Vorteil von Semaphoren gegenüber Locks ist, dass Deadlocks bei Semaphoren nie auftreten können. ❌
+
+----
+
+**Welche der Aussagen über Monitore sind korrekt?**
+
+- Unter bestimmten Bedingungen kann ein Monitor von mehreren Threads betreten werden. ❌
+    - *Kommentar: In einem Monitor befindet sich zu jedem Zeitpunkt immer nur ein einziger Thread.*
+- Eine eﬀiziente Implementierung des Reader-Writer-Problems mit einem Monitor ist nicht möglich,
+    weil der Code in einem Monitor immer sequentiell ausgeführt wird. ❌
+    - *Kommentar: Eﬀizient = Mehrere Reader können lesen. Eine Implementierung des Problems mit einem Monitor ist in der Ankündigung Beispielcode Monitor 2 (Reader-Writer-Problem) enthalten. Der Monitor selbst reguliert nur den Zugang zum kritischen Abschnitt, enthält diesen jedoch nicht.*
+- Ein Monitor ist ein abstrakter Datentyp. ✅
+- Der Lock in einem Monitor kann auch durch eine binäre Semaphore ersetzt werden. ❌
+    - *Kommentar: Theoretisch stimmt das, aber praktisch werden beispielsweise Condition Variables immer in Kombination mit Mutexen verwendet (siehe die Datentypen der Methoden einer Condition Variable).*
+
+----
+
+**Welche der Aussagen über OpenMP sind korrekt?**
+
+- Der primäre Zweck von `#pragma omp master` und `#pragma omp critical` ist es, kritische Abschnitte abzusichern. ❌
+    - *Kommentar: Es geht hier um den **primären** Zweck. `#pragma omp master` ist hier nicht geeignet (nur ein einziger Thread führt den kritischen Abschnitt überhaupt aus).*
+- Functional Parallelism wird mit der Pragma-Direktive `#pragma omp parallel` implementiert. Weitere Pragma-Direktiven sind nicht notwendig. ❌
+- Die Pragma-Direktiven `#pragma omp critical` und `#pragma omp atomic` sind äquivalent zueinander. ❌
+    - Kommentar: `#pragma omp atomic` ist nur sehr beschränkt anwendbar.
+- Keine der Antworten trifft zu. ✅
+
+----
+
+**Welche der Aussagen über MPI sind korrekt?**
+
+- Die Methode `MPI_Alltoall` ist deprecated und wurde in MPI-2 zu `MPI_Allgather` umbenannt. ❌
+- Der Unterschied zwischen `MPI_Gather` und `MPI_Allgather` ist, dass bei `MPI_Allgather` jeder Knoten die Daten von allen anderen Knoten erhält und bei `MPI_Gather` nur ein einziger Knoten. ✅
+- Das "I" in `MPI_Isend` steht für „Immediate“. Das heißt, beim Aufruf von `MPI_Isend` blockiert der Knoten sofort und wartet solange, bis die Sendeoperation abgeschlossen wurde. ❌
+- Mit `MPI_Scatter` verteilt ein Wurzelknoten den Inhalt von einem Array auf alle Knoten in einem Kommunikator. ✅
+- `MPI_Allgather` kann man auch explizit mit einem Gathering Ring und den Methoden `MPI_Isend` und `MPI_Irecv` implementieren. ❌
+    - *Kommentar: Siehe Vorlesung.*
+
+----
+
+**Das Vorgehensmodell nach Ian Foster...**
+
+- ...besteht aus den Superphasen Teile und Herrsche. Das kann man anhand des Hyperquicksort Beispiels aus der Vorlesung gut beobachten. ❌
+- ...modelliert die Kommunikation zwischen einzelnen Teilaufgaben, fasst Teilaufgaben mit viel Kommunikation untereinander zusammen und verteilt diese zusammengefassten Teilaufgaben passend auf verschiedene Knoten in einem Netzwerk. ✅
+- ...lässt sich sinnvoll auf ein Programm anwenden, welches unbedingt seriell ablaufen muss. ❌
+- ...benutzt als Basis das sogenannte Task/Channel-Model. Das Senden und Empfangen von Nachrichten erfolgt hier synchron (z.B. über `MPI_Send` und `MPI_Recv`). ❌
+    - Kommentar: Das Senden erfolgt asynchron (z.B. über `MPI_Isend`).
+
+----
+
+**Welche der Aussagen zum BSP Model sind korrekt?**
+
+- Das BSP Model ist ein Synonym für das Vorgehensmodell von Ian Foster. ❌
+- Das BSP Model bietet sich gut für die parallele Berechnung des N-Body Problem an. ✅
+- Die Abkürzung BSP steht für BBQ Stack Parallelism. ❌
+
+----
+
+**Welche der Aussagen über Verteilungstransparenz sind korrekt?**
+
+- Die Ortstransparenz beschreibt, dass der Zugriff auf Methoden unabhängig davon ist, ob die Methode lokal oder entfernt ist. ❌
+    - *Kommentar: Das ist die Beschreibung der Zugriffstransparenz.*
+- Die Schnittstellentransparenz besagt, dass man für eine Komponente eine Schnittstelle definiert
+    und damit für die Abstraktion von Implementierungsdetails sorgt. ❌
+- Die Nebenläufigkeitstransparenz ermöglicht, dass mehrere Nutzer gleichzeitig auf Dienste und Res-
+    sourcen zugreifen können. ✅
+- Die Zugriffstransparenz beschreibt, dass der genaue Standort von einer Komponente nicht relevant für die Nutzung der Komponente ist. ❌
+    - *Kommentar: Das ist die Beschreibung der Ortstransparenz.*
+
+---
+
+**Welche der Aussagen sind korrekt?** 
+
+- Multicast basiert auf TCP. ❌
+- Protokolle für P2P-Netzwerke gehören immer der Transportschicht an. ❌
+    - *Kommentar: Overlay Networks → Anwendungsschicht.*
+- Zur Aufbau einer TCP-Verbindung in Java verwendet ein Server die Klasse `ServerSocket`. ✅
+
+----
+
+**Das Request-Reply-Protokoll...**
+
+-  ...wird sowohl in RMI als auch in RPC verwendet. ✅
+- ...lässt sich ausschließlich auf Basis von TCP implementieren. ❌
+- ...hat zu hohen Kommunikationsaufwand und wird daher nie genutzt. ❌
+
+----
+
+**Die folgenden Schritte beschreiben den Ablauf eines RPCs. Bringe die Schritte in eine sinnvolle Reihenfolge. **
+
+**✅ Sinnvolle Reihenfolge:**
+
+1. Das Client Program ruft eine Methode von der Client Stub Procedure auf.
+2. Die Client Stub Procedure stellt eine Nachricht zusammen. Dafür werden die Argumente der Funktion serialisiert.
+3. Die Nachricht wird mittels des Request-Reply-Protokolls an den Server gesendet.
+4. Der Dispatcher erhält die Nachricht und übergibt diese der passenden Server Stub Procedure.
+5. Die Server Stub Procedure entpackt die Nachricht (Deserialisierung) und ruft mit den entpackten Argumenten die Service Procedure auf.
+6. Die Service Procedure führt letztendlich die Methode aus und gibt das Ergebnis (Rückgabewert) an die Server Stub Procedure zurück.
+7. Die Server Stub Procedure stellt eine Nachricht zusammen. Dafür wird das Ergebnis des Funktio- nenaufrufs serialisiert.
+8. Die Nachricht wird mittels des Request-Reply-Protokolls an den Client zurückgesendet.
+9. Die Client Stub Procedure entpackt die Nachricht (Deserialisierung) und übergibt das Ergebnis des entfernten Aufrufs an das Client Program.
+
+----
+
+**Welche der Aussagen über RMI stimmt?**
+
+- Mit der Funktion `Naming.lookup(…)` erhält man von der RMIregistry eine Referenz auf ein Remote Object (beispielsweise über einen Stub). ✅
+- Marshalling ist in RMI nicht notwendig. ❌
+- RMI ist ein Beispiel für eine Middleware. ✅
+- RMI und RPC sind relativ ähnlich in ihrer Funktionsweise. ✅
+- Das Remote Reference Module ist für die Übersetzung zwischen lokalen und entfernten Referenzen zuständig. ✅
+
+----
+
+**Eine RMIregistry...**
+
+- ...übernimmt in RMI die Kommunikation zwischen Client und Server mittels des Request-Reply-Protokolls. ❌
+
+- ...ist unter anderem zuständig für die Registrierung von Remote Objects. ✅
+
+- ...leitet Anfragen vom Client and das Skeleton weiter. ❌
+
+----
+
+**Ein unstrukturiertes P2P-Netzwerk...**
+
+- ...ist hoch skalierbar. ❌
+    - *Kommentar: Pure P2P mit Flooding ist nicht skalierbar.*
+
+- ...robust gegenüber einzelnen ausgefallenen Knoten. ❌
+    - *Kommentar: In Centralized P2P gibt es serverartige Knoten, deren Ausfall das P2P-Netzwerk in seiner Funktion ernsthaft beeinträchtigen kann.*
+
+- ...kommt vollständig ohne Flooding aus. ❌
+- Keine der Antworten trifft zu. ✅
+
+----
+
+**Welche der Aussagen über Cloud Computing sind wahr?**
+
+- SaaS, PaaS und IaaS sind alles Beispiele für Service Models. ✅
+- Abstraktion und Virtualisierung sind die Kernkonzepte in Cloud Computing. ✅
+- SaaS bietet einem Benutzer eine größere Flexibilität als IaaS. ❌
 
 ----
 
