@@ -668,25 +668,50 @@ Java RMI is a Java API that performs **remote method invocation**, the object-or
 
 ... 
 
-## Peer-to-Peer Systems
+## P2P Systems
 
-...
+<img src="ALP4 notes.assets/p2p.svg" alt="p2p" style="zoom: 67%;" />
 
-### Basics
+### Overlay Networks
 
-...
+An overlay network is a virtual network consisting of nodes and virtual links, which sits on top of an underlying network.
+
+- provides services and features tailored to the needs of particular applications or higher-level services
+- In **unstructured overlay networks** placement of resources is independent from the overlay topology and typically need to be located/searched. Location of resource is only known to its submitter.
+    Main task: **search**
+- In **structured overlay networks** the topology and resource placement is tightly controlled.
+    Main task: **lookup**
+- 👍 enable definition of new network services without changing underlying network structure
+- 👍 encourage experimentation with, and customization of, network services
+- 👍 multiple overlays can coexist
+- 👎 extra level of indirection
+- 👎 add to the complexity of network services
 
 ### Centralized, Pure and Hybrid P2P Systems
 
-...
+- **Centralized P2P**
+    - Central server in charge of indexing and facilitating connections between peers
+    - Example: **Napster**
+    - 👍 simple to implement
+    - 👎 vulnerable to failure of central server
+    - 👎 scalability bounded by server capabilities
+- **Pure P2P**
+    - Examples: **Gnutella 0.4**
+    - 👍 robust to removal/failure of single entities
+    - 👎 scalability issues if reliant on flooding (like Gnutella 0.4)
+- **Hybrid P2P**
+    - Examples: **Gnutella 0.6**
+    - Dynamic central entities (ultrapeers) designated to have additional resources
+    - Ultrapeers heavily connected to each other, terminal entities connect to ultrapeers
+    - 👍 robust to removal/failure of *terminal* entities
+    - 👍 reduces number of hops needed for exhaustive search
 
 ### DHT-based P2P Systems
 
-...
+- Examples: **BitTorrent**
 
-### P2P-based Whiteboard
-
-...
+- uses distributed hash table (DHT)
+- prefix-based routing
 
 ## Cloud Computing
 
